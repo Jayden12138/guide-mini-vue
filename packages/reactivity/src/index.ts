@@ -1,5 +1,6 @@
 export {
-    effect
+    effect,
+    stop
 } from './effect'
 export {
     reactive

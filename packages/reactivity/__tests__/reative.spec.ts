@@ -1,5 +1,4 @@
 import { effect, reactive } from "../src"
-import { describe, it, expect } from 'vitest'
 
 describe('reactive', () => {
     it('happy path', () => {

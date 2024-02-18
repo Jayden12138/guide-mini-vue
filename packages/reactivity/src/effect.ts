@@ -7,13 +7,19 @@
 
 let activeEffect: any;
 class ReactiveEffect {
-  private _fn: any;
-  constructor(fn: any, public scheduler?: any) {
-    this._fn = fn;
-  }
+  deps = [];
+  constructor(public fn: any, public scheduler?: any) {}
   run() {
     activeEffect = this;
-    return this._fn();
+    const result = this.fn();
+    activeEffect = undefined;
+    return result;
+  }
+
+  stop() {
+    this.deps.forEach((dep: any) => {
+      dep.delete(this);
+    });
   }
 }
 
@@ -23,7 +29,9 @@ export function effect(fn: any, options?: any) {
     const _effect = new ReactiveEffect(fn, scheduler)
     _effect.run()
 
-    return _effect.run.bind(_effect)
+  const runner: any = _effect.run.bind(_effect);
+  runner.effect = _effect;
+  return runner;
 }
 
 const targetMap = new Map();
@@ -41,19 +49,25 @@ export function track(target: any, key: any) {
         dep = new Set()
         depsMap.set(key, dep)
     }
-    
-    dep.add(activeEffect)
+  if (!activeEffect) return;
+  dep.add(activeEffect);
+  (activeEffect as any).deps.push(dep);
 }
 
 // 触发依赖
 export function trigger(target: any, key: any) {
     const depsMap = targetMap.get(target);
     const dep = depsMap.get(key);
-  dep.forEach((effect: any) => {
+    dep.forEach((effect: any) => {
       if (effect.scheduler) {
           effect.scheduler()
       } else {
         effect.run();
       }
     })
+}
+
+
+export function stop(runner: any) {
+    runner.effect.stop()
 }
