@@ -5,9 +5,13 @@
  * 当reactive包装的变量发生变化时，会触发set 在set中触发trigger trigger中会查询到之前保存的相关effect函数fn，遍历执行
  */
 
+import { extend } from "./shared";
+
 let activeEffect: any;
 class ReactiveEffect {
+  active = true;
   deps = [];
+  onStop?: () => void;
   constructor(public fn: any, public scheduler?: any) {}
   run() {
     activeEffect = this;
@@ -17,17 +21,31 @@ class ReactiveEffect {
   }
 
   stop() {
-    this.deps.forEach((dep: any) => {
-      dep.delete(this);
-    });
+    if (this.active) {
+      cleanupEffect(this);
+      if(this.onStop) {
+        this.onStop()
+      }
+      this.active = false;
+    }
   }
 }
 
+function cleanupEffect(effect: any) {
+  effect.deps.forEach((dep: any) => {
+    dep.delete(effect);
+  });
+  effect.deps.length = 0;
+}
 
-export function effect(fn: any, options?: any) {
-  const scheduler = options?.scheduler
-    const _effect = new ReactiveEffect(fn, scheduler)
-    _effect.run()
+
+export function effect(fn: any, options: any = {}) {
+  const _effect = new ReactiveEffect(fn, options.scheduler)
+  // _effect.onStop = options.onStop
+  // Object.assign(_effect, options) // 挂载多个属性
+  extend(_effect, options) // 抽离出去改个名字
+  
+  _effect.run()
 
   const runner: any = _effect.run.bind(_effect);
   runner.effect = _effect;
@@ -49,7 +67,7 @@ export function track(target: any, key: any) {
         dep = new Set()
         depsMap.set(key, dep)
     }
-  if (!activeEffect) return;
+  if (!activeEffect) return; // 只有在effect中 才有activeEffect 当只有reactive时，触发get是不存在deps的
   dep.add(activeEffect);
   (activeEffect as any).deps.push(dep);
 }

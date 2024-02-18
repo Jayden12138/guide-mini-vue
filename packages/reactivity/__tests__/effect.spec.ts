@@ -58,4 +58,14 @@ describe('effect', () => {
     runner();
     expect(dummy).toBe(3);
   });
+
+  it('events: onStop', () => {
+    const onStop = jest.fn();
+    const runner = effect(() => {}, {
+      onStop,
+    });
+
+    stop(runner);
+    expect(onStop).toHaveBeenCalled();
+  });
 })
