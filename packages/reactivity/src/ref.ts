@@ -6,6 +6,7 @@ class RefImpl {
     private _value: any
     private _rawValue: any
     public dep
+    public __v_isRef = true // isRef 判断标识
     constructor(value: any) {
         this._rawValue = value
         this._value = convert(value)

@@ -36,3 +36,7 @@ export function isReadonly(value: any) {
 export function isProxy(value: any) {
   return isReactive(value) || isReadonly(value);
 }
+
+export function isRef(ref: any) {
+  return !!ref.__v_isRef
+}
