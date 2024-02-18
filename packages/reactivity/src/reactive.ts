@@ -40,3 +40,7 @@ export function isProxy(value: any) {
 export function isRef(ref: any) {
   return !!ref.__v_isRef
 }
+
+export function unRef(ref: any) {
+  return isRef(ref) ? ref.value : ref
+}

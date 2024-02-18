@@ -10,6 +10,7 @@ export {
   shallowReadonly,
   isProxy,
   isRef,
+  unRef,
 } from './reactive';
 export {
     ref
