@@ -11,6 +11,7 @@ export {
   isProxy,
   isRef,
   unRef,
+  proxyRefs,
 } from './reactive';
 export {
     ref
