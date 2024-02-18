@@ -8,6 +8,7 @@
 import { extend } from "./shared";
 
 let activeEffect: any;
+let shouldTrack: any;
 class ReactiveEffect {
   active = true;
   deps = [];
@@ -15,9 +16,18 @@ class ReactiveEffect {
   constructor(public fn: any, public scheduler?: any) {}
   run() {
     activeEffect = this;
-    const result = this.fn();
-    activeEffect = undefined;
-    return result;
+
+    if (!this.active) {
+      return this.fn();
+    }
+
+    shouldTrack = true;
+    const result = this.fn()
+
+    // reset
+    shouldTrack = false;
+
+    return result
   }
 
   stop() {
@@ -68,6 +78,7 @@ export function track(target: any, key: any) {
         depsMap.set(key, dep)
     }
   if (!activeEffect) return; // 只有在effect中 才有activeEffect 当只有reactive时，触发get是不存在deps的
+  if (!shouldTrack) return;
   dep.add(activeEffect);
   (activeEffect as any).deps.push(dep);
 }
