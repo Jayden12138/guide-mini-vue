@@ -16,3 +16,6 @@ export {
 export {
     ref
 } from './ref'
+export {
+  computed
+} from './computed'
