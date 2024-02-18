@@ -1,3 +1,4 @@
+import { ReactiveFlags } from './reactive';
 import { track, trigger } from './effect';
 
 const get = createGetter(); // 优化点 不需要每次访问都调用createGetter 这里只会在初始化的时候执行一次
@@ -6,6 +7,9 @@ const readonlyGet = createGetter(true);
 
 function createGetter(isReadonly: boolean = false) {
   return function get(target: any, key: any) {
+    if (key === ReactiveFlags.IS_REACTIVE) { // 在前面优化reactive 和 readonly时，这里的get被抽离出来，通过传入的isReadonly来区分，这里isReactive也可以借用这个值来判断
+      return !isReadonly;
+    }
     const res = Reflect.get(target, key);
     if (!isReadonly) {
       track(target, key);

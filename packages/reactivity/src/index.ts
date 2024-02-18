@@ -4,5 +4,6 @@ export {
 } from './effect'
 export {
     reactive,
-    readonly
+    readonly,
+    isReactive
 } from './reactive'

@@ -1,4 +1,4 @@
-import { effect, reactive } from "../src"
+import { effect, isReactive, reactive } from "../src"
 
 describe('reactive', () => {
     it('happy path', () => {
@@ -6,6 +6,8 @@ describe('reactive', () => {
         const observed = reactive(original)
         expect(observed).not.toBe(original)
         expect(observed.foo).toBe(1)
+        expect(isReactive(observed)).toBe(true)
+        expect(isReactive(original)).toBe(false)
     })
 
     it('should observe basic properties', () => {
