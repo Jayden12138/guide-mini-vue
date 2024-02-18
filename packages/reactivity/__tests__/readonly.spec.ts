@@ -1,4 +1,4 @@
-import { readonly } from "../src"
+import { isReadonly, readonly } from "../src"
 
 describe('readonly', () => {
 
@@ -7,6 +7,8 @@ describe('readonly', () => {
         const observed = readonly(original)
         expect(observed).not.toBe(original)
         expect(observed.foo).toBe(1)
+        expect(isReadonly(observed)).toBe(true)
+        expect(isReadonly(original)).toBe(false);
     })
 
     it('should not allow reassignment', () => {

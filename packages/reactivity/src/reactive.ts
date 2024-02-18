@@ -2,6 +2,7 @@ import { mutableHandlers, readonlyHandlers } from "./baseHandlers";
 
 export const enum ReactiveFlags {
   IS_REACTIVE = "__v_isReactive",
+  IS_READONLY = "__v_isReadonly"
 }
 
 export function reactive(raw: any) {
@@ -17,5 +18,9 @@ function createActiveObject(raw: any, baseHandlers: any) {
 }
 
 export function isReactive(value: any) {
-  return !!value[ReactiveFlags.IS_REACTIVE];
+  return !!value[ReactiveFlags.IS_REACTIVE]; // 触发getter 在getter中通过入参isreadonly来判断
+}
+
+export function isReadonly(value: any) {
+  return !!value[ReactiveFlags.IS_READONLY];
 }
