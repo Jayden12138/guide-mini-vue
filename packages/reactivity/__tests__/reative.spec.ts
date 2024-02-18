@@ -1,4 +1,4 @@
-import { effect, isReactive, reactive } from "../src"
+import { effect, isReactive, reactive, isProxy } from '../src';
 
 describe('reactive', () => {
     it('happy path', () => {
@@ -8,6 +8,7 @@ describe('reactive', () => {
         expect(observed.foo).toBe(1)
         expect(isReactive(observed)).toBe(true)
         expect(isReactive(original)).toBe(false)
+        expect(isProxy(observed)).toBe(true)
     })
 
     it('should observe basic properties', () => {

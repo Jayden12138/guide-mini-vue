@@ -1,4 +1,4 @@
-import { isReadonly, readonly } from "../src"
+import { isReadonly, readonly, isProxy } from "../src"
 
 describe('readonly', () => {
 
@@ -11,6 +11,7 @@ describe('readonly', () => {
         expect(isReadonly(original)).toBe(false);
         expect(isReadonly(observed.bar)).toBe(true);
         expect(isReadonly(original.bar)).toBe(false);
+        expect(isProxy(observed)).toBe(true);
     })
 
     it('should not allow reassignment', () => {
