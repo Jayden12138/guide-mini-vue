@@ -1,5 +1,6 @@
-import { ReactiveFlags } from './reactive';
+import { ReactiveFlags, reactive } from './reactive';
 import { track, trigger } from './effect';
+import { isObject } from './shared';
 
 const get = createGetter(); // 优化点 不需要每次访问都调用createGetter 这里只会在初始化的时候执行一次
 const set = createSetter();
@@ -13,6 +14,11 @@ function createGetter(isReadonly: boolean = false) {
       return isReadonly
     }
     const res = Reflect.get(target, key);
+
+    if (isObject(res)) {
+      return reactive(res);
+    }
+
     if (!isReadonly) {
       track(target, key);
     }
