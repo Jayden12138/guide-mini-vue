@@ -65,22 +65,28 @@ export function effect(fn: any, options: any = {}) {
 const targetMap = new Map();
 // 依赖收集
 export function track(target: any, key: any) {
-    // target -> key -> dep
-    let depsMap = targetMap.get(target);
-    if (!depsMap) {
-        depsMap = new Map()
-        targetMap.set(target, depsMap)
-    }
+  if (!isTracking()) return; // 小优化 如果不进行收集，那targetmap depsmap等都不需要获取/创建
 
-    let dep = depsMap.get(key);
-    if(!dep) {
-        dep = new Set()
-        depsMap.set(key, dep)
-    }
-  if (!activeEffect) return; // 只有在effect中 才有activeEffect 当只有reactive时，触发get是不存在deps的
-  if (!shouldTrack) return;
-  dep.add(activeEffect);
-  (activeEffect as any).deps.push(dep);
+  // target -> key -> dep
+  let depsMap = targetMap.get(target);
+  if (!depsMap) {
+    depsMap = new Map()
+    targetMap.set(target, depsMap)
+  }
+
+  let dep = depsMap.get(key);
+  if(!dep) {
+    dep = new Set()
+    depsMap.set(key, dep)
+  }
+  if (!dep.has(activeEffect)) {
+    dep.add(activeEffect);
+    (activeEffect as any).deps.push(dep);
+  }
+}
+
+function isTracking() {
+  return shouldTrack && activeEffect !== undefined
 }
 
 // 触发依赖
