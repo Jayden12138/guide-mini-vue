@@ -8,7 +8,7 @@ class RefImpl {
     public dep
     constructor(value: any) {
         this._rawValue = value
-        this._value = isObject(value) ? reactive(value) : value
+        this._value = convert(value)
 
         // value -> reactive
         // 1. value isObject ? reactive(value) : value
@@ -24,10 +24,14 @@ class RefImpl {
     set value(newValue) {
         if (hasChanged(newValue, this._rawValue)) {
             this._rawValue = newValue
-            this._value = isObject(newValue) ? reactive(newValue) : newValue;
+            this._value = convert(newValue)
             triggerEffects(this.dep);
         }
     }
+}
+
+function convert(value: any) {
+    return isObject(value) ? reactive(value) : value
 }
 
 function trackRefValue(ref: any) {
