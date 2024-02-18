@@ -79,27 +79,34 @@ export function track(target: any, key: any) {
     dep = new Set()
     depsMap.set(key, dep)
   }
-  if (!dep.has(activeEffect)) {
-    dep.add(activeEffect);
-    (activeEffect as any).deps.push(dep);
-  }
+  trackEffects(dep)
 }
 
-function isTracking() {
+export function trackEffects(dep: any) {
+  if (dep.has(activeEffect)) return;
+  dep.add(activeEffect);
+  (activeEffect as any).deps.push(dep);
+}
+
+export function isTracking() {
   return shouldTrack && activeEffect !== undefined
 }
 
 // 触发依赖
 export function trigger(target: any, key: any) {
     const depsMap = targetMap.get(target);
-    const dep = depsMap.get(key);
-    dep.forEach((effect: any) => {
-      if (effect.scheduler) {
-          effect.scheduler()
-      } else {
-        effect.run();
-      }
-    })
+  const dep = depsMap.get(key);
+  triggerEffects(dep)
+}
+
+export function triggerEffects(dep: any) {
+    for (const effect of dep) {
+        if (effect.scheduler) {
+            effect.scheduler()
+        } else {
+            effect.run();
+        }
+    }
 }
 
 
