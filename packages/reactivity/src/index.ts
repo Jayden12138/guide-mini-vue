@@ -3,5 +3,6 @@ export {
     stop
 } from './effect'
 export {
-    reactive
+    reactive,
+    readonly
 } from './reactive'
