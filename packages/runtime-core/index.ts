@@ -10,3 +10,4 @@ export {
 export {
     createTextVNode
 } from './vnode'
+export { getCurrentInstance } from './component';
