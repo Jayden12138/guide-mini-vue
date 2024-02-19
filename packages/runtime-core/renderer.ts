@@ -2,9 +2,9 @@ import { ShapeFlags, isOn } from "../shared/src/index";
 import { createComponentInstance, setupComponent } from "./component"
 import { Fragment, Text } from "./vnode";
 
-export function render(vnode, container, parentComponent) {
+export function render(vnode, container) {
   // 调用 patch（便于递归处理）
-  patch(vnode, container, parentComponent);
+  patch(vnode, container, null);
 }
 
 
