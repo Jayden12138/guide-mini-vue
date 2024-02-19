@@ -13,8 +13,8 @@ export const App = {
             h('p', {}, 'hi'),
             h(Foo, {
                 // on + event name
-                onAdd() {
-                    console.log('onAdd');
+                onAdd(a, b) {
+                    console.log('onAdd', a, b);
                 }
             })
         ]

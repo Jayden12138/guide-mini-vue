@@ -1,7 +1,7 @@
 
 
 
-export function emit(instance, event) {
+export function emit(instance, event, ...args) {
   console.log('emit: ', event);
 
   // instance.props -> event
@@ -28,7 +28,7 @@ export function emit(instance, event) {
   const handlerName = toHandlerKey(event);
 
   const handler = props[handlerName];
-  handler && handler();
+  handler && handler(...args);
 }
 
 
