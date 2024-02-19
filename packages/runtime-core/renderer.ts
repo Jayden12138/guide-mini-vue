@@ -1,5 +1,6 @@
 import { ShapeFlags, isOn } from "../shared/src/index";
 import { createComponentInstance, setupComponent } from "./component"
+import { Fragment } from "./vnode";
 
 export function render(vnode, container) {
     // 调用 patch（便于递归处理）
@@ -14,7 +15,7 @@ function patch(vnode, container) {
   // Fragment -> 只渲染children
 
   switch (type) {
-    case 'Fragment':
+    case Fragment:
       processFragment(vnode, container);
       break;
 
