@@ -7,3 +7,6 @@ export {
 export {
     renderSlots
 } from './helpers/renderSlots'
+export {
+    createTextVNode
+} from './vnode'

@@ -1,6 +1,6 @@
 import { ShapeFlags, isOn } from "../shared/src/index";
 import { createComponentInstance, setupComponent } from "./component"
-import { Fragment } from "./vnode";
+import { Fragment, Text } from "./vnode";
 
 export function render(vnode, container) {
     // 调用 patch（便于递归处理）
@@ -18,6 +18,9 @@ function patch(vnode, container) {
     case Fragment:
       processFragment(vnode, container);
       break;
+    case Text:
+      processText(vnode, container);
+      break;
 
     default:
       if (shapeFlag & ShapeFlags.ELEMENT) {
@@ -33,6 +36,12 @@ function processFragment(vnode, container) {
   mountChildren(vnode, container)
 }
 
+function processText(vnode, container) {
+  const { children } = vnode
+  const textNode = (vnode.el = document.createTextNode(children))
+  container.appendChild(textNode)
+}
+
 function processElement(vnode, container) {
     // mount // update
     mountElement(vnode, container)
@@ -45,9 +54,7 @@ function mountElement(vnode, container) {
   // el.setAttribute('key', 'value')
   // document.body.append(el)
 
-  const el = document.createElement(vnode.type);
-   
-    vnode.el = el;
+  const el = (vnode.el = document.createElement(vnode.type))
 
     const { children, props, shapeFlag } = vnode
     // children: string | array
