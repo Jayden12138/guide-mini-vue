@@ -34,10 +34,8 @@ function mountElement(vnode, container) {
     // children: string | array
     if(typeof children == 'string') {
         el.textContent = children
-    } else if(Array.isArray(children)) {
-        children.forEach(child => {
-            patch(child, el)
-        })
+    } else if (Array.isArray(children)) {
+        mountChildren(vnode, el)
     }
 
   // props
@@ -68,4 +66,11 @@ function setupRenderEffect(instance: any, container: any) {
 
     patch(subTree, container)
 
+}
+
+
+function mountChildren(vnode, container) {
+    vnode.children.forEach((child) => {
+        patch(child, container);
+    });
 }
