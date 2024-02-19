@@ -4,6 +4,10 @@ import { Foo } from './Foo.js'
 export const App = {
   setup() {},
     render() {
+        /**
+         * 作用域插槽
+         * 
+         */
         const app = h('div', {}, 'App')
         const foo = h(
             Foo,
@@ -14,8 +18,8 @@ export const App = {
             // ]
             // h('p', {}, 'foo00')
             {
-                header: h('p', {}, 'header'),
-                footer: h('p', {}, 'footer'),
+                header: ({age}) => h('p', {}, 'header - '+age),
+                footer: () => h('p', {}, 'footer'),
             }
         )
 
