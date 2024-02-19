@@ -8,14 +8,17 @@ export const App = {
                 id: 'root',
                 class: ['red', 'hard']
             },
-            // 'hi ' + this.msg
+            // setupState
+            // this.$el
+            // 为了实现通过this可以访问到以上内容，通过proxy来实现
+            'hi ' + this.msg
             // string
             // 'hi hi',
-            // array
-            [
-                h('p', { class: 'red' }, 'p1'),
-                h('p', { class: 'blue' }, 'p2')
-            ]
+            // // array
+            // [
+            //     h('p', { class: 'red' }, 'p1'),
+            //     h('p', { class: 'blue' }, 'p2')
+            // ]
         )
     },
     setup() {
