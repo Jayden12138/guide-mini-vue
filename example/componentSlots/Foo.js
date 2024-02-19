@@ -11,6 +11,10 @@ export const Foo = {
         console.log(this.$slots);
         // this.$slots array -> vnode
         // return h('div', {}, [foo, h('div', {}, this.$slots)]);
-        return h('div', {}, [foo, renderSlots(this.$slots)]);
+        return h('div', {}, [
+          renderSlots(this.$slots, 'header'),
+          foo,
+          renderSlots(this.$slots, 'footer'),
+        ]);
     }
 }

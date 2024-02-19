@@ -12,7 +12,11 @@ export const App = {
             //     h('p', {}, 'fo'),
             //     h('p', {}, 'o'),
             // ]
-            h('p', {}, 'foo00')
+            // h('p', {}, 'foo00')
+            {
+                header: h('p', {}, 'header'),
+                footer: h('p', {}, 'footer'),
+            }
         )
 
 
