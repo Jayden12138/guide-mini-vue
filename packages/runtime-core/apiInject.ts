@@ -8,6 +8,14 @@ export function provide(key, value) {
     if (currentInstance) {
         let { provides } = currentInstance
 
+        const parentProvides = currentInstance.parent?.provides
+
+        if (provides === parentProvides) {
+            // init 
+            // 只在初始化时执行
+            provides = currentInstance.provides = Object.create(parentProvides)
+        }
+
         provides[key] = value
     }
 }
