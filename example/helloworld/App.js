@@ -4,6 +4,7 @@ import { Foo } from './Foo.js'
 
 window.self = null
 export const App = {
+    name: 'App',
     render() {
         window.self = this
         return h(

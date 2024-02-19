@@ -1,4 +1,4 @@
-import { proxyRefs } from "../reactivity/src/reactive";
+import { proxyRefs, shallowReadonly } from "../reactivity/src/reactive";
 import { initProps } from "./componentProps"
 import { componentPublicIstanceHandlers } from "./componentPublicInstance"
 
@@ -29,7 +29,7 @@ function setupStatefulComponent(instance) {
     const { setup } = Component
 
     if (setup) {
-        const setupResult = setup(instance.props)
+        const setupResult = setup(shallowReadonly(instance.props));
         
         handleSetupResult(instance, setupResult)
     }

@@ -10,6 +10,8 @@ export const Foo = {
   setup(props) {
     // props.count
     console.log(props);
+
+    props.count++ // 这里修改了props.count
   },
   render() {
     return h('div', {}, 'foo: ' + this.count);

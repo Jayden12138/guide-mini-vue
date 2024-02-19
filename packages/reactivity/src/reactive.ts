@@ -3,6 +3,7 @@ import {
   readonlyHandlers,
   shallowReadonlyHandlers,
 } from './baseHandlers';
+import { isObject } from './shared/index';
 
 export const enum ReactiveFlags {
   IS_REACTIVE = "__v_isReactive",
@@ -22,7 +23,11 @@ export function shallowReadonly(raw: any) {
 }
 
 function createActiveObject(raw: any, baseHandlers: any) {
-  return new Proxy(raw, baseHandlers);
+  if(isObject(raw)) {
+    return new Proxy(raw, baseHandlers)
+  } else {
+    console.warn(`target ${raw} 必须是一个对象`)
+  }
 }
 
 export function isReactive(value: any) {
