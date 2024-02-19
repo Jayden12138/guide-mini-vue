@@ -1,3 +1,5 @@
+import { hasOwn } from "../shared/src/index";
+
 const publicPropertiesMap = {
     $el: (i) => i.vnode.el
 }
@@ -7,8 +9,6 @@ export const componentPublicIstanceHandlers = {
   get({_: instance}, key) {
     const { setupState, props } = instance;
     // setupState
-    const hasOwn = (val, key) => Object.prototype.hasOwnProperty.call(val, key);
-
     if(hasOwn(setupState, key)) {
         return setupState[key];
     }else if(hasOwn(props, key)) {
