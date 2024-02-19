@@ -1,4 +1,4 @@
-import { ShapeFlags } from "../shared/src/index";
+import { ShapeFlags, isOn } from "../shared/src/index";
 import { createComponentInstance, setupComponent } from "./component"
 
 export function render(vnode, container) {
@@ -44,7 +44,6 @@ function mountElement(vnode, container) {
   for (let key in props) {
     // 先实现具体 -> 通用
       // on + Event name
-    const isOn = (key: string) => /^on[A-Z]/.test(key);
     const val = props[key];
     if (isOn(key)) {
       const event = key.slice(2).toLowerCase();
