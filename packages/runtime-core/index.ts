@@ -1,6 +1,4 @@
-export {
-    createApp
-} from './createApp'
+export { createAppAPI } from './createApp';
 export {
     h
 } from './h'
@@ -12,3 +10,4 @@ export {
 } from './vnode'
 export { getCurrentInstance } from './component';
 export { provide, inject } from './apiInject'
+export { createRenderer } from './renderer'
