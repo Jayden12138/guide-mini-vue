@@ -2,7 +2,8 @@ export function createComponentInstance(vnode) {
     const component = {
         vnode,
         type: vnode.type,
-        setupState: {}
+        setupState: {},
+        el: null,
     }
     return component
 }
@@ -25,7 +26,10 @@ function setupStatefulComponent(instance) {
             if(key in setupState) {
                 return setupState[key];
             }
-            // 
+            // this.$el
+            if(key === '$el') {
+                return instance.vnode.el
+            }
 
         }
     })
