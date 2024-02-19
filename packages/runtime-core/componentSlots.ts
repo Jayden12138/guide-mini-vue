@@ -1,5 +1,12 @@
+import { ShapeFlags } from "../shared/src/index"
+
+
 export function initSlots(instance, children) {
-    normalizeObjectSlots(children, instance.slots)
+    // 判断是否是slots
+    const { vnode } = instance
+    if(vnode.shapeFlag & ShapeFlags.SLOTS_CHILDREN) {
+        normalizeObjectSlots(children, instance.slots)
+    }
 }
 
 
