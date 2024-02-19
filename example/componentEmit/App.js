@@ -15,7 +15,10 @@ export const App = {
                 // on + event name
                 onAdd(a, b) {
                     console.log('onAdd', a, b);
-                }
+                },
+                onAddFoo() {  
+                  console.log('onAddFoo');
+                } 
             })
         ]
     );

@@ -25,12 +25,18 @@ export function emit(instance, event, ...args) {
    *
    */
 
-  const handlerName = toHandlerKey(event);
+  const handlerName = toHandlerKey(camelize(event));
 
   const handler = props[handlerName];
   handler && handler(...args);
 }
 
+
+const camelize = (str: string) => {
+  return str.replace(/-(\w)/g, (_, c) => {
+    return c ? c.toUpperCase() : '';
+  });
+}
 
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);

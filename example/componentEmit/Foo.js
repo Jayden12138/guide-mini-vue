@@ -5,6 +5,7 @@ export const Foo = {
         const emitAdd = () => {
             console.log('emitAdd');
             emit('add', 1, 2);
+            emit('add-foo');
         }
         return {
             emitAdd
