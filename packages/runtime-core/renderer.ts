@@ -42,7 +42,14 @@ function mountElement(vnode, container) {
 
   // props
   for (let key in props) {
+    // 先实现具体 -> 通用
+      // on + Event name
+    const isOn = (key: string) => /^on[A-Z]/.test(key);
     const val = props[key];
+    if (isOn(key)) {
+      const event = key.slice(2).toLowerCase();
+      el.addEventListener(event, val);
+    }
     el.setAttribute(key, val);
   }
 
