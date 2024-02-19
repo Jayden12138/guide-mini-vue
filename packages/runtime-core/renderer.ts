@@ -1,3 +1,4 @@
+import { isObject } from "../reactivity/src/shared/index"
 import { createComponentInstance, setupComponent } from "./component"
 
 export function render(vnode, container) {
@@ -7,10 +8,45 @@ export function render(vnode, container) {
 
 
 function patch(vnode, container) {
-    // 处理组件
-    processComponent(vnode, container)
+    if (typeof vnode.type === "string") {
+        processElement(vnode, container)
+    }else if (isObject(vnode.type)) {
+        processComponent(vnode, container)
+    }
+}
 
-    // processElement(vnode, container)
+function processElement(vnode, container) {
+    // mount // update
+    mountElement(vnode, container)
+}
+
+function mountElement(vnode, container) {
+  // 四步
+  // const el = document.createElement('div')
+  // el.textContent = 'hi'
+  // el.setAttribute('key', 'value')
+  // document.body.append(el)
+
+  const el = document.createElement(vnode.type);
+  vnode.el = el;
+
+    const { children, props } = vnode
+    // children: string | array
+    if(typeof children == 'string') {
+        el.textContent = children
+    } else if(Array.isArray(children)) {
+        children.forEach(child => {
+            patch(child, el)
+        })
+    }
+
+  // props
+  for (let key in props) {
+    const val = props[key];
+    el.setAttribute(key, val);
+  }
+
+  container.appendChild(el);
 }
 
 function processComponent(vnode, container) {
