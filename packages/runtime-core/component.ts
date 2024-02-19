@@ -13,7 +13,7 @@ export function createComponentInstance(vnode, parent) {
       el: null,
         proxy: {},
         slots: {},
-        provides: {},
+        provides: parent ? parent.provides : {},
         parent,
       emit: () => {},
     };
