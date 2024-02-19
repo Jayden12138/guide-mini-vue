@@ -9,12 +9,12 @@ export function render(vnode, container) {
 function patch(vnode, container) {
     // 处理组件
     processComponent(vnode, container)
+
+    // processElement(vnode, container)
 }
 
 function processComponent(vnode, container) {
-    if (typeof vnode.type === 'function') {
-        mountComponent(vnode, container)
-    }
+    mountComponent(vnode, container);
 }
 
 function mountComponent(vnode, container) {
