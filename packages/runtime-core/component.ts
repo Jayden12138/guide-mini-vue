@@ -1,14 +1,15 @@
+import { proxyRefs } from "../reactivity/src/reactive";
 import { initProps } from "./componentProps"
 import { componentPublicIstanceHandlers } from "./componentPublicInstance"
 
 export function createComponentInstance(vnode) {
     const component = {
-        vnode,
-        type: vnode.type,
-        setupState: {},
-        el: null,
-        proxy: {}
-    }
+      vnode,
+      type: vnode.type,
+      setupState: {},
+      el: null,
+      proxy: {},
+    };
     return component
 }
 
@@ -36,8 +37,11 @@ function setupStatefulComponent(instance) {
 
 function handleSetupResult(instance, setupResult) {
     // function | object
-    instance.setupState = setupResult;
-
+    if(typeof setupResult === 'object') {
+        instance.setupState = proxyRefs(setupResult);
+    }else if(typeof setupResult === 'function') {
+        instance.render = setupResult
+    }
     finishComponentSetup(instance)
 
 }
