@@ -1,5 +1,6 @@
 // import { h } from '../../node_modules/vue/dist/vue.esm-browser.js'
 import { h } from '../../lib/mini-vue.esm.js'
+import { Foo } from './Foo.js'
 
 window.self = null
 export const App = {
@@ -20,7 +21,7 @@ export const App = {
             // setupState
             // this.$el
             // 为了实现通过this可以访问到以上内容，通过proxy来实现
-            'hi ' + this.msg
+            // 'hi ' + this.msg
             // string
             // 'hi hi',
             // // array
@@ -28,6 +29,14 @@ export const App = {
             //     h('p', { class: 'red' }, 'p1'),
             //     h('p', { class: 'blue' }, 'p2')
             // ]
+
+            // props
+            [
+                h('p', { class: 'red' }, 'hi ' + this.msg),
+                h(Foo, {
+                    count: 1
+                })
+            ]
         )
     },
     setup() {
