@@ -1,4 +1,4 @@
-import { h } from '../../lib/mini-vue.esm.js'
+import { h, renderSlots } from '../../lib/mini-vue.esm.js';
 
 
 export const Foo = {
@@ -9,6 +9,8 @@ export const Foo = {
     render() {
         const foo = h('div', {}, 'foo')
         console.log(this.$slots);
-        return h('div', {}, [foo, this.$slots])
+        // this.$slots array -> vnode
+        // return h('div', {}, [foo, h('div', {}, this.$slots)]);
+        return h('div', {}, [foo, renderSlots(this.$slots)]);
     }
 }
