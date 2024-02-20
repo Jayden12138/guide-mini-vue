@@ -1,5 +1,6 @@
 export * from '../src/shapeFlags';
 
+export const EMPTY_OBJ = {};
 
 export const hasOwn = (val, key) =>
       Object.prototype.hasOwnProperty.call(val, key);
