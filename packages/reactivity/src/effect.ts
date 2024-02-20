@@ -15,13 +15,13 @@ export class ReactiveEffect {
   onStop?: () => void;
   constructor(public fn: any, public scheduler?: any) {}
   run() {
-    activeEffect = this;
 
     if (!this.active) {
       return this.fn();
     }
 
     shouldTrack = true;
+    activeEffect = this;
     const result = this.fn()
 
     // reset
