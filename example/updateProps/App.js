@@ -21,7 +21,9 @@ export const App = {
         }
 
         const onChangePropsDemo3 = () => {
-            delete props.value.bar
+            props.value = {
+                foo: 'foo'
+            }
         }
 
         return {

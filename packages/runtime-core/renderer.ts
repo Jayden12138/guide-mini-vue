@@ -87,6 +87,12 @@ export function createRenderer(options) {
         hostPatchProp(el, key, prevProp, nextProp);
       }
     }
+
+    for(const key in oldProps) {
+      if (!(key in newProps)) {
+        hostPatchProp(el, key, oldProps[key], null);
+      }
+    }
   }
 
   function mountElement(vnode, container, parentComponent) {
