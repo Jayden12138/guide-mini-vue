@@ -6,12 +6,12 @@ function createElement(type: string) {
     return document.createElement(type)
 }
 
-function patchProp(el, key, val) {
+function patchProp(el, key, prevVal, nextVal) {
     if (isOn(key)) {
         const event = key.slice(2).toLowerCase();
-        el.addEventListener(event, val);
+        el.addEventListener(event, nextVal);
     }
-    el.setAttribute(key, val);
+    el.setAttribute(key, nextVal);
 }
 function insert(el, container) {
     container.appendChild(el);

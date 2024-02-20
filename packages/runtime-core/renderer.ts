@@ -66,6 +66,27 @@ export function createRenderer(options) {
     console.log('patchElement')
     console.log('n1: ', n1)
     console.log('n2: ', n2)
+
+    const oldProps = n1.props || {};
+    const newProps = n2.props || {};
+
+    /**
+     * 这里的el， 一开始是从mountElement中定义的、
+     * 这里如果只是拿去 const el = n1.el 在下一次更新时会取不到el，因为n2会取代n1
+     */
+    const el = (n2.el = n1.el);
+    patchProps(el, oldProps, newProps);
+
+  }
+
+  function patchProps(el, oldProps, newProps) {
+    for(const key in newProps) {
+      const prevProp = oldProps[key];
+      const nextProp = newProps[key];
+      if (prevProp !== nextProp) {
+        hostPatchProp(el, key, prevProp, nextProp);
+      }
+    }
   }
 
   function mountElement(vnode, container, parentComponent) {
@@ -90,7 +111,7 @@ export function createRenderer(options) {
       // 先实现具体 -> 通用
       // on + Event name
       const val = props[key];
-      hostPatchProp(el, key, val);
+      hostPatchProp(el, key, null, val);
     }
     hostInsert(el, container);
   }
