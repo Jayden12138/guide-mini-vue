@@ -156,6 +156,14 @@ export function createRenderer(options) {
           i++;
         }
       }
+    } else {
+      // 老的比新的多
+      if (i > e2) {
+        while (i <= e1) {
+          hostRemove(c1[i].el);
+          i++;
+        }
+      }
     }
 
   }
