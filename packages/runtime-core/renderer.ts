@@ -113,6 +113,7 @@ export function createRenderer(options) {
     let e1 = c1.length - 1;
     let e2 = c2.length - 1;
 
+    // 左侧对比
     while (i <= e1 && i <= e2) {
       const n1 = c1[i];
       const n2 = c2[i];
@@ -126,6 +127,23 @@ export function createRenderer(options) {
     }
 
     console.log('left: ', i, e1, e2);
+
+    // 右侧对比
+    while (i <= e1 && i <= e2) {
+      const n1 = c1[e1];
+      const n2 = c2[e2];
+
+      if (isSomeVNodeType(n1, n2)) {
+        patch(n1, n2, container, parentComponent);
+      } else {
+        break;
+      }
+      e1--;
+      e2--;
+    }
+
+    
+    console.log('right: ', i, e1, e2);
 
   }
 
