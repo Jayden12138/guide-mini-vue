@@ -5,17 +5,17 @@ import { h, ref } from '../../lib/mini-vue.esm.js';
 // 1. 左侧的对比
 // (a b) c
 // (a b) d e
-// const prevChildren = [
-//     h('p', { key: 'A' }, "A"),
-//     h('p', { key: 'B' }, "B"),
-//     h('p', { key: 'C' }, "C"),
-// ]
-// const nextChildren = [
-//     h('p', { key: 'A' }, "A"),
-//     h('p', { key: 'B' }, "B"),
-//     h('p', { key: 'D' }, "D"),
-//     h('p', { key: 'E' }, "E"),
-// ]
+const prevChildren = [
+    h('p', { key: 'A' }, "A"),
+    h('p', { key: 'B' }, "B"),
+    h('p', { key: 'C' }, "C"),
+]
+const nextChildren = [
+    h('p', { key: 'A' }, "A"),
+    h('p', { key: 'B' }, "B"),
+    h('p', { key: 'D' }, "D"),
+    h('p', { key: 'E' }, "E"),
+]
 
 // 2. 右侧的对比
 // a (b c)
@@ -228,18 +228,18 @@ import { h, ref } from '../../lib/mini-vue.esm.js';
         
     }
  */
-const prevChildren = [
-    h('p', { key: 'A' }, "A"),
-    h('p', {}, "C"),
-    h('p', { key: 'B' }, "B"),
-    h('p', { key: 'D' }, "D"),
-]
-const nextChildren = [
-    h('p', { key: 'A' }, "A"),
-    h('p', { key: 'B' }, "B"),
-    h('p', {}, "C"),
-    h('p', { key: 'D' }, "D"),
-]
+// const prevChildren = [
+//     h('p', { key: 'A' }, "A"),
+//     h('p', {}, "C"),
+//     h('p', { key: 'B' }, "B"),
+//     h('p', { key: 'D' }, "D"),
+// ]
+// const nextChildren = [
+//     h('p', { key: 'A' }, "A"),
+//     h('p', { key: 'B' }, "B"),
+//     h('p', {}, "C"),
+//     h('p', { key: 'D' }, "D"),
+// ]
 
 
 

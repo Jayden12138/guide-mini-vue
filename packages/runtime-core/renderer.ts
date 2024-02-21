@@ -97,14 +97,40 @@ export function createRenderer(options) {
         // 2. 设置新值
         hostSetElementText(container, c2);
       }
-    }
-
-    if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+    } else {
       if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
         hostSetElementText(container, '');
         mountChildren(c2, container, parentComponent);
+      } else {
+        // array -> array
+        patchKeyedChildren(c1, c2, container, parentComponent)
       }
     }
+  }
+
+  function patchKeyedChildren(c1, c2, container, parentComponent) {
+    let i = 0;
+    let e1 = c1.length - 1;
+    let e2 = c2.length - 1;
+
+    while (i <= e1 && i <= e2) {
+      const n1 = c1[i];
+      const n2 = c2[i];
+
+      if (isSomeVNodeType(n1, n2)) {
+        patch(n1, n2, container, parentComponent);
+      } else {
+        break;
+      }
+      i++
+    }
+
+    console.log('left: ', i, e1, e2);
+
+  }
+
+  function isSomeVNodeType(n1, n2) {
+    return n1.type === n2.type && n1.key === n2.key
   }
 
   function unmountChildren(children) {
