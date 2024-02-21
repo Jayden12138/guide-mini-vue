@@ -163,6 +163,47 @@ export function createRenderer(options) {
           hostRemove(c1[i].el);
           i++;
         }
+      } else {
+        // 乱序
+        const s1 = i; // 老节点 i
+        const s2 = i; // 新节点 i
+
+        
+        const keyToNewIndexMap = new Map();
+
+        // 遍历新节点乱序部分 ， 建立key和index的映射， 方便后续遍历老节点乱序部分时查找是否有相同key
+        for (let i = s2; i <= e2; i++) {
+          const nextChild = c2[i];
+          keyToNewIndexMap.set(nextChild.key, i);
+        }
+
+
+        // 遍历老节点 乱序部分 
+        // 
+        for (let i = s1; i <= e1; i++) {
+          const prevChild = c1[i];
+
+          let newIndex;
+          if(prevChild.key !== null) {
+            newIndex = keyToNewIndexMap.get(prevChild.key);
+          } else {
+            // 遍历新节点 乱序部分 找到 与当前老节点 一样的 下标 // 移动！
+            for (let j = s2; j <= e2; j++) {
+              if(isSomeVNodeType(prevChild, c2[j])){
+                newIndex = j
+
+                break;
+              }
+            }
+          }
+          // 没有新的位置 // 删掉
+          // 如果找到对应的新位置 则patch
+          if(newIndex === undefined) {
+            hostRemove(prevChild.el);
+          } else {
+            patch(prevChild, c2[newIndex], container, parentComponent, null);
+          }
+        }
       }
     }
 
