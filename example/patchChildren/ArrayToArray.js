@@ -57,7 +57,7 @@ const prevChildren = [
     h('p', { key: 'B' }, "B"),
 ]
 const nextChildren = [
-    // h('p', { key: 'D' }, "D"),
+    h('p', { key: 'D' }, "D"),
     h('p', { key: 'C' }, "C"),
     h('p', { key: 'A' }, "A"),
     h('p', { key: 'B' }, "B"),
