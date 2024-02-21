@@ -168,6 +168,9 @@ export function createRenderer(options) {
         const s1 = i; // 老节点 i
         const s2 = i; // 新节点 i
 
+        const toBePatched = e2 - s2 + 1;
+        let patched = 0;
+
         
         const keyToNewIndexMap = new Map();
 
@@ -182,6 +185,11 @@ export function createRenderer(options) {
         // 
         for (let i = s1; i <= e1; i++) {
           const prevChild = c1[i];
+
+          if (patched >= toBePatched) {
+            hostRemove(prevChild.el)
+            continue;
+          }
 
           let newIndex;
           if(prevChild.key !== null) {
@@ -202,6 +210,7 @@ export function createRenderer(options) {
             hostRemove(prevChild.el);
           } else {
             patch(prevChild, c2[newIndex], container, parentComponent, null);
+            patched++
           }
         }
       }

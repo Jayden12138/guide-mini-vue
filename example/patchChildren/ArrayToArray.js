@@ -101,35 +101,11 @@ import { h, ref } from '../../lib/mini-vue.esm.js';
 // a b (e c) f g
 // D 节点在新的里面没有需要删除
 // C 节点 props 也发生了变化
-const prevChildren = [
-    h('p', { key: 'A' }, "A"),
-    h('p', { key: 'B' }, "B"),
-    h('p', { key: 'C', id: 'c-prev' }, "C"),
-    h('p', { key: 'D' }, "D"),
-    h('p', { key: 'F' }, "F"),
-    h('p', { key: 'G' }, "G"),
-]
-const nextChildren = [
-    h('p', { key: 'A' }, "A"),
-    h('p', { key: 'B' }, "B"),
-    h('p', { key: 'E' }, "E"),
-    h('p', { key: 'C', id: 'c-next' }, "C"),
-    h('p', { key: 'F' }, "F"),
-    h('p', { key: 'G' }, "G"),
-]
-
-// 5.1
-// a b (c e d) f g
-// a b (e c) f g
-// 当所有的新的节点都对比完了，老节点还存在元素，这些元素都可以被删除
 // const prevChildren = [
 //     h('p', { key: 'A' }, "A"),
 //     h('p', { key: 'B' }, "B"),
 //     h('p', { key: 'C', id: 'c-prev' }, "C"),
-//     h('p', { key: 'E' }, "E"),
 //     h('p', { key: 'D' }, "D"),
-//     h('p', { key: 'Z' }, "Z"),
-//     h('p', { key: 'X' }, "X"),
 //     h('p', { key: 'F' }, "F"),
 //     h('p', { key: 'G' }, "G"),
 // ]
@@ -141,6 +117,30 @@ const nextChildren = [
 //     h('p', { key: 'F' }, "F"),
 //     h('p', { key: 'G' }, "G"),
 // ]
+
+// 5.1
+// a b (c e d) f g
+// a b (e c) f g
+// 当所有的新的节点都对比完了，老节点还存在元素，这些元素都可以被删除
+const prevChildren = [
+    h('p', { key: 'A' }, "A"),
+    h('p', { key: 'B' }, "B"),
+    h('p', { key: 'C', id: 'c-prev' }, "C"),
+    h('p', { key: 'E' }, "E"),
+    h('p', { key: 'D' }, "D"),
+    h('p', { key: 'Z' }, "Z"),
+    h('p', { key: 'X' }, "X"),
+    h('p', { key: 'F' }, "F"),
+    h('p', { key: 'G' }, "G"),
+]
+const nextChildren = [
+    h('p', { key: 'A' }, "A"),
+    h('p', { key: 'B' }, "B"),
+    h('p', { key: 'E' }, "E"),
+    h('p', { key: 'C', id: 'c-next' }, "C"),
+    h('p', { key: 'F' }, "F"),
+    h('p', { key: 'G' }, "G"),
+]
 
 
 // 5.2 移动
