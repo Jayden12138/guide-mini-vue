@@ -122,38 +122,14 @@ import { h, ref } from '../../lib/mini-vue.esm.js';
 // a b (c e d) f g
 // a b (e c) f g
 // 当所有的新的节点都对比完了，老节点还存在元素，这些元素都可以被删除
-const prevChildren = [
-    h('p', { key: 'A' }, "A"),
-    h('p', { key: 'B' }, "B"),
-    h('p', { key: 'C', id: 'c-prev' }, "C"),
-    h('p', { key: 'E' }, "E"),
-    h('p', { key: 'D' }, "D"),
-    h('p', { key: 'Z' }, "Z"),
-    h('p', { key: 'X' }, "X"),
-    h('p', { key: 'F' }, "F"),
-    h('p', { key: 'G' }, "G"),
-]
-const nextChildren = [
-    h('p', { key: 'A' }, "A"),
-    h('p', { key: 'B' }, "B"),
-    h('p', { key: 'E' }, "E"),
-    h('p', { key: 'C', id: 'c-next' }, "C"),
-    h('p', { key: 'F' }, "F"),
-    h('p', { key: 'G' }, "G"),
-]
-
-
-// 5.2 移动
-// a b (c d e) f g
-// a b (e c d) f g
-// 只需要移动e
-// 寻找最长递增子序列 这些是不需要改变的，除了这个子序列之外的是不稳定的元素，需要进行移动 （ 算法： 最长递增子序列）
 // const prevChildren = [
 //     h('p', { key: 'A' }, "A"),
 //     h('p', { key: 'B' }, "B"),
-//     h('p', { key: 'C' }, "C"),
-//     h('p', { key: 'D' }, "D"),
+//     h('p', { key: 'C', id: 'c-prev' }, "C"),
 //     h('p', { key: 'E' }, "E"),
+//     h('p', { key: 'D' }, "D"),
+//     h('p', { key: 'Z' }, "Z"),
+//     h('p', { key: 'X' }, "X"),
 //     h('p', { key: 'F' }, "F"),
 //     h('p', { key: 'G' }, "G"),
 // ]
@@ -161,11 +137,35 @@ const nextChildren = [
 //     h('p', { key: 'A' }, "A"),
 //     h('p', { key: 'B' }, "B"),
 //     h('p', { key: 'E' }, "E"),
-//     h('p', { key: 'C' }, "C"),
-//     h('p', { key: 'D' }, "D"),
+//     h('p', { key: 'C', id: 'c-next' }, "C"),
 //     h('p', { key: 'F' }, "F"),
 //     h('p', { key: 'G' }, "G"),
 // ]
+
+
+// 5.2 移动
+// a b (c d e) f g
+// a b (e c d) f g
+// 只需要移动e
+// 寻找最长递增子序列 这些是不需要改变的，除了这个子序列之外的是不稳定的元素，需要进行移动 （ 算法： 最长递增子序列）
+const prevChildren = [
+    h('p', { key: 'A' }, "A"),
+    h('p', { key: 'B' }, "B"),
+    h('p', { key: 'C' }, "C"),
+    h('p', { key: 'D' }, "D"),
+    h('p', { key: 'E' }, "E"),
+    h('p', { key: 'F' }, "F"),
+    h('p', { key: 'G' }, "G"),
+]
+const nextChildren = [
+    h('p', { key: 'A' }, "A"),
+    h('p', { key: 'B' }, "B"),
+    h('p', { key: 'E' }, "E"),
+    h('p', { key: 'C' }, "C"),
+    h('p', { key: 'D' }, "D"),
+    h('p', { key: 'F' }, "F"),
+    h('p', { key: 'G' }, "G"),
+]
 
 
 // 5.3 创建
