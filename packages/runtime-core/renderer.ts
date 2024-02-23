@@ -198,7 +198,7 @@ export function createRenderer(options) {
           }
 
           let newIndex;
-          if(prevChild.key !== null) {
+          if(prevChild.key != null) {
             newIndex = keyToNewIndexMap.get(prevChild.key);
           } else {
             // 遍历新节点 乱序部分 找到 与当前老节点 一样的 下标 // 移动！
@@ -238,9 +238,7 @@ export function createRenderer(options) {
 
           if(newIndexToOldIndexMap[i] === 0) {
             patch(null, nextChild, container, parentComponent, anchor);
-          }
-
-          if (moved) {
+          } else if (moved) {
             if (j < 0 || i !== increasingNewIndexSequence[j]) {
               console.log('移动');
               hostInsert(nextChild.el, container, anchor);
