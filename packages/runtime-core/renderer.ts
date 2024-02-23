@@ -3,6 +3,7 @@ import { EMPTY_OBJ, ShapeFlags, isOn } from "../shared/src/index";
 import { createComponentInstance, setupComponent } from "./component"
 import { shouldUpdateComponent } from "./componentUpdateUtils";
 import { createAppAPI } from './createApp';
+import { queueJobs } from "./scheduler";
 import { Fragment, Text } from "./vnode";
 
 
@@ -397,6 +398,11 @@ export function createRenderer(options) {
         
         patch(prevSubTree, subTree, container, instance, anchor);
 
+      }
+    }, {
+      scheduler() {
+        // console.log('update - scheduler');
+        queueJobs(instance.update)
       }
     })
   }
