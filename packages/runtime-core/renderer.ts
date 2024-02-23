@@ -1,6 +1,7 @@
 import { effect } from "../reactivity/src/effect";
 import { EMPTY_OBJ, ShapeFlags, isOn } from "../shared/src/index";
 import { createComponentInstance, setupComponent } from "./component"
+import { shouldUpdateComponent } from "./componentUpdateUtils";
 import { createAppAPI } from './createApp';
 import { Fragment, Text } from "./vnode";
 
@@ -321,10 +322,14 @@ export function createRenderer(options) {
 
   function updateComponent(n1, n2) {
     const instance = (n2.component = n1.component); // 类似el
+    if (shouldUpdateComponent(n1, n2)) {
+      instance.next = n2;
 
-    instance.next = n2;
-    
-    instance.update()
+      instance.update();
+    } else {
+      n2.el = n1.el;
+      instance.vnode = n2;
+    }
   }
 
   function mountComponent(initialVNode, container, parentComponent, anchor) {
