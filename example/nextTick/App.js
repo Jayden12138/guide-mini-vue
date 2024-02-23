@@ -1,7 +1,8 @@
 import {
   h,
   ref,
-  getCurrentInstance,
+    getCurrentInstance,
+  nextTick
 } from '../../lib/mini-vue.esm.js';
 
 export const App = {
@@ -19,9 +20,9 @@ export const App = {
             // nextTick
 
             // 1. 在nextTick中获取instance
-            // nextTick(()=>{
-            //     console.log(instance)
-            // })
+            nextTick(()=>{
+                console.log(instance)
+            })
 
             // 2. await 
             // await nextTick()
