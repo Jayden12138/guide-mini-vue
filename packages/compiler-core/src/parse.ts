@@ -45,7 +45,7 @@ function isEnd(context, ancestor){
     if(s.startsWith("</")){
         for(let i = ancestor.length - 1; i >= 0; i--){
             const tag = ancestor[i].tag
-            if(tag === s.slice(2, 2 + tag.length)){
+            if(startsWithEndTagOpen(s, tag)){
                 return true
             }
         }
@@ -100,7 +100,7 @@ function parseElement(context: any, ancestor){
     // 取出tag
     ancestor.pop()
 
-    if(context.source.slice(2, 2 + element.tag.length) === element.tag){
+    if(startsWithEndTagOpen(context.source, element.tag)){
         // 标签一致
         parseTag(context, TagType.End)
     }else{
@@ -110,6 +110,11 @@ function parseElement(context: any, ancestor){
     // console.log(context.source)
 
     return element
+}
+
+function startsWithEndTagOpen(source, tag){
+    // return source.slice(2, 2 + tag.length) === tag
+    return source.startsWith("</") && source.slice(2, 2 + tag.length).toLowerCase() === tag.toLowerCase()
 }
 
 function parseTag(context, type: TagType){
