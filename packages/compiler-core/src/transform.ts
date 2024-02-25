@@ -28,15 +28,16 @@ function traverseNode(node: any, context){
         transform(node)
     }
 
-    console.log(node)
+    traverseChildren(node, context);
+}
 
-
+function traverseChildren(node: any, context: any) {
     const children = node.children;
 
-    if(children){
-        for(let i = 0; i < children.length; i++){
-            const node = children[i]
-            traverseNode(node, context)
+    if (children) {
+        for (let i = 0; i < children.length; i++) {
+            const node = children[i];
+            traverseNode(node, context);
         }
     }
 }
