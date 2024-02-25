@@ -1,4 +1,5 @@
 import { NodeTypes } from "./ast"
+import { TO_DISPLAY_STRING, helperMapName } from "./runtimeHelpers"
 
 export function generate(ast){
     const context = createCodegenContext()
@@ -29,7 +30,7 @@ function genFunctionPreamble(ast: any, context: any) {
     const VueBinging = "Vue"
 
     // const helpers = ["toDisplayString"] // ast.helpers
-    const aliasHelpers = (s) => `${s}: _${s}`
+    const aliasHelpers = (s) => `${helperMapName[s]}: _${helperMapName[s]}`
     if(ast.helpers.length > 0){
         push(
             `const { ${ast.helpers.map(aliasHelpers).join(", ")} } = ${VueBinging}`
@@ -48,6 +49,9 @@ function createCodegenContext(): any{
         code: "",
         push(source){
             context.code += source
+        },
+        helper(key){
+            return `_${helperMapName[key]}`
         }
     }
     return context
@@ -78,9 +82,9 @@ function genExpression(node, context){
 }
 
 function genInterpolation(node, context){
-    const { push } = context
+    const { push, helper } = context
     console.log(node)
-    push(`_toDisplayString(`)
+    push(`${helper(TO_DISPLAY_STRING)}(`)
     genNode(node.content, context)
     push(`)`)
 }
