@@ -8,20 +8,20 @@ export enum TagType {
 
 export function baseParse(content: string){
     const context = createParserContext(content)
-    return createRoot(parseChildren(context, ""))
+    return createRoot(parseChildren(context, []))
 }
 
-function parseChildren(context, parentTag){
+function parseChildren(context, ancestor){
     const nodes: any = []
 
-    while(!isEnd(context, parentTag)){
+    while(!isEnd(context, ancestor)){
         let node;
         const s = context.source;
         if(s.startsWith("{{")){
             node = parseInterpolation(context)
         }else if(s.startsWith("<")){
             if(/[a-z]/i.test(s[1])){
-                node = parseElement(context)
+                node = parseElement(context, ancestor)
             }
         }
 
@@ -35,15 +35,20 @@ function parseChildren(context, parentTag){
     return nodes;
 }
 
-function isEnd(context, parentTag){
+function isEnd(context, ancestor){
     // 停止循环标识
     // 1. source 处理完
     // 2. 处理结束标签
 
-    // 2.
+    // 2. 
     const s = context.source
-    if(parentTag && s.startsWith(`</${parentTag}>`)){
-        return true
+    if(s.startsWith("</")){
+        for(let i = ancestor.length - 1; i >= 0; i--){
+            const tag = ancestor[i].tag
+            if(tag === s.slice(2, 2 + tag.length)){
+                return true
+            }
+        }
     }
 
     // 1. 
@@ -83,13 +88,24 @@ function parseTextData(context, length){
     return content
 }
 
-function parseElement(context: any){
+function parseElement(context: any, ancestor){
     const element: any = parseTag(context, TagType.Start) // <div>
 
-    // 递归处理 children
-    element.children = parseChildren(context, element.tag)
+    // 收集 tag
+    ancestor.push(element)
 
-    parseTag(context, TagType.End) // </div>
+    // 递归处理 children
+    element.children = parseChildren(context, ancestor)
+
+    // 取出tag
+    ancestor.pop()
+
+    if(context.source.slice(2, 2 + element.tag.length) === element.tag){
+        // 标签一致
+        parseTag(context, TagType.End)
+    }else{
+        throw new Error(`缺少结束标签: ${element.tag}`)
+    }
 
     // console.log(context.source)
 
