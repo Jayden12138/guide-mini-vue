@@ -3,6 +3,8 @@ export function generate(ast){
 
     const {push} = context
 
+    push(`const { toDisplayString: _toDisplayString } = Vue`)
+
     // return 
     push("return ")
 

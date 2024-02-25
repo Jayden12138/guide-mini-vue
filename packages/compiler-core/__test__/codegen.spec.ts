@@ -7,9 +7,7 @@ describe('codegen', () => {
     it('string', () => {
         const ast = baseParse('hi')
 
-        transform(ast, {
-            nodeTransforms: []
-        })
+        transform(ast)
         const { code } = generate(ast)
 
         // 快照
@@ -17,5 +15,14 @@ describe('codegen', () => {
         // 2. update 快照 有意
         expect(code).toMatchSnapshot()
 
+    })
+
+    it('interpolation', () => {
+        const ast = baseParse("{{message}}")
+
+        transform(ast)
+        const { code } = generate(ast)
+
+        expect(code).toMatchSnapshot()
     })
 })
