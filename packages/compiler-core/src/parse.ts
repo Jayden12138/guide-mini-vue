@@ -22,8 +22,32 @@ function parseChildren(context){
             node = parseElement(context)
         }
     }
+
+
+    if(!node){
+        node = parseText(context)
+    }
+
     nodes.push(node)
     return nodes;
+}
+
+function parseText(context){
+    // Implement
+    // 1. 解析 text
+    // 2. 删除处理完成的代码
+
+    // 1.
+    const content = context.source;
+    // 2.
+    advanceBy(context, content.length)
+
+    console.log(context.source)
+
+    return { 
+        type: NodeTypes.TEXT,
+        content
+    }
 }
 
 function parseElement(context: any){
