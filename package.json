@@ -2,7 +2,6 @@
   "name": "te",
   "version": "1.0.0",
   "license": "MIT",
-  "type": "module",
   "private": true,
   "main": "lib/mini-vue.cjs.js",
   "module": "lib/mini-vue.esm.js",
