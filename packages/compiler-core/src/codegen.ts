@@ -1,22 +1,38 @@
 export function generate(ast){
+    const context = createCodegenContext()
+
+    const {push} = context
 
     // return 
-    let code = ''
-    code += "return "
+    push("return ")
 
     const functionName = "render"
     const args = ["_ctx", "_cache"]
     const signature = args.join(", ")
 
-    code += `function ${functionName}(${signature}) {`
+    push(`function ${functionName}(${signature}) {`)
 
-    const node = ast.codegenNode
-
-    code +=  `return '${node.content}'`
-    code += "}"
+    push(`return `)
+    genNode(ast.codegenNode, context)
+    push("}")
 
 
     return {
-        code
+        code: context.code
     }
+}
+
+function createCodegenContext(): any{
+    const context = {
+        code: "",
+        push(source){
+            context.code += source
+        }
+    }
+    return context
+}
+
+function genNode(node, context){
+    const {push} = context
+    push(`'${node.content}'`)
 }
