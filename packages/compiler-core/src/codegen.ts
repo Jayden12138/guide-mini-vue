@@ -9,7 +9,10 @@ export function generate(ast){
     const signature = args.join(", ")
 
     code += `function ${functionName}(${signature}) {`
-    code +=  "return 'hi'"
+
+    const node = ast.codegenNode
+
+    code +=  `return '${node.content}'`
     code += "}"
 
 

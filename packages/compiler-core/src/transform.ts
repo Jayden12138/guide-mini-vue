@@ -8,6 +8,13 @@ export function transform(root, options) {
 
     // 1. 
     traverseNode(root, context)
+
+    // codegen root 不用 generate 需要从 root.children[0] 开始
+    createRootCodegen(root)
+}
+
+function createRootCodegen(root){
+    root.codegenNode = root.children[0]
 }
 
 function createTransformContext(root: any, options: any){
