@@ -37,17 +37,21 @@ function parseText(context){
     // 1. 解析 text
     // 2. 删除处理完成的代码
 
-    // 1.
-    const content = context.source;
-    // 2.
-    advanceBy(context, content.length)
-
-    console.log(context.source)
+    const content = parseTextData(context, context.source.length)
 
     return { 
         type: NodeTypes.TEXT,
         content
     }
+}
+
+function parseTextData(context, length){
+    // 1.
+    const content = context.source.slice(0, length);
+    // 2.
+    advanceBy(context, length)
+
+    return content
 }
 
 function parseElement(context: any){
@@ -96,7 +100,10 @@ function parseInterpolation(context){
 
     const rawContentLength = closeIndex - openDelimiter.length
 
-    const rawContent = context.source.slice(0, rawContentLength)
+    // const rawContent = context.source.slice(0, rawContentLength)
+
+    const rawContent = parseTextData(context, rawContentLength)
+
 
     const content = rawContent.trim()
 
