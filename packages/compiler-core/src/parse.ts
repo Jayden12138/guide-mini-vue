@@ -13,23 +13,41 @@ export function baseParse(content: string){
 
 function parseChildren(context){
     const nodes: any = []
-    let node;
-    const s = context.source;
-    if(s.startsWith("{{")){
-        node = parseInterpolation(context)
-    }else if(s.startsWith("<")){
-        if(/[a-z]/i.test(s[1])){
-            node = parseElement(context)
+
+    while(!isEnd(context)){
+        let node;
+        const s = context.source;
+        if(s.startsWith("{{")){
+            node = parseInterpolation(context)
+        }else if(s.startsWith("<")){
+            if(/[a-z]/i.test(s[1])){
+                node = parseElement(context)
+            }
         }
+
+
+        if(!node){
+            node = parseText(context)
+        }
+
+        nodes.push(node)
     }
-
-
-    if(!node){
-        node = parseText(context)
-    }
-
-    nodes.push(node)
     return nodes;
+}
+
+function isEnd(context){
+    // 停止循环标识
+    // 1. source 处理完
+    // 2. 处理结束标签
+
+    // 2.
+    const s = context.source
+    if(s.startsWith("</")){
+        return true
+    }
+
+    // 1. 
+    return !s
 }
 
 function parseText(context){
@@ -37,7 +55,16 @@ function parseText(context){
     // 1. 解析 text
     // 2. 删除处理完成的代码
 
-    const content = parseTextData(context, context.source.length)
+    // {{
+    let endIndex = context.source.length
+    let endToken = "{{"
+
+    const index = context.source.indexOf(endToken)
+    if(index !== -1){
+        endIndex = index
+    }
+
+    const content = parseTextData(context, endIndex)
 
     return { 
         type: NodeTypes.TEXT,
@@ -55,8 +82,10 @@ function parseTextData(context, length){
 }
 
 function parseElement(context: any){
-    const element = parseTag(context, TagType.Start) // <div>
+    const element: any = parseTag(context, TagType.Start) // <div>
 
+    // 递归处理 children
+    element.children = parseChildren(context)
 
     parseTag(context, TagType.End) // </div>
 
@@ -108,7 +137,7 @@ function parseInterpolation(context){
     const content = rawContent.trim()
 
 
-    advanceBy(context, rawContentLength + closeDelimiter.length)// 已经处理了的就从 context 中删除，继续处理后面的内容
+    advanceBy(context, closeDelimiter.length)// 已经处理了的就从 context 中删除，继续处理后面的内容
 
     return {
         type: NodeTypes.INTERPOLATION,
