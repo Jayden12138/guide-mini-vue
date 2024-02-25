@@ -99,11 +99,10 @@ function genElement(node, context){
     const {push, helper} = context
     const { tag, children } = node
     console.log('=====genElement: ', children)
-    const child = children[0]
     push(
         `${helper(CREATE_ELEMENT_VNODE)}("${tag}"), null, `)
 
-    genNode(child, context)
+    genNode(children, context)
 
     push(")")
 }
