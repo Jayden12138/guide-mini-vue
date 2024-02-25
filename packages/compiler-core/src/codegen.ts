@@ -3,19 +3,7 @@ export function generate(ast){
 
     const {push} = context
 
-    const VueBinging = "Vue"
-
-    // const helpers = ["toDisplayString"] // ast.helpers
-
-    const aliasHelpers = (s) => `${s}: _${s}`
-
-    push(`const { ${ast.helpers.map(aliasHelpers).join(", ")} } = ${VueBinging}`)
-
-    //  添加个回车
-    push("\n")
-
-    // return 
-    push("return ")
+    genFunctionPreamble(ast, context)
 
     const functionName = "render"
     const args = ["_ctx", "_cache"]
@@ -31,6 +19,22 @@ export function generate(ast){
     return {
         code: context.code
     }
+}
+
+function genFunctionPreamble(ast: any, context: any) {
+    const {push} = context
+    const VueBinging = "Vue"
+
+    // const helpers = ["toDisplayString"] // ast.helpers
+    const aliasHelpers = (s) => `${s}: _${s}`
+
+    push(`const { ${ast.helpers.map(aliasHelpers).join(", ")} } = ${VueBinging}`)
+
+    //  添加个回车
+    push("\n")
+
+    // return 
+    push("return ")
 }
 
 function createCodegenContext(): any{
