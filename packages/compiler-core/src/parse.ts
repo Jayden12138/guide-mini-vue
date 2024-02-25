@@ -57,11 +57,13 @@ function parseText(context){
 
     // {{
     let endIndex = context.source.length
-    let endToken = "{{"
+    let endToken = ["<", "{{"]
 
-    const index = context.source.indexOf(endToken)
-    if(index !== -1){
-        endIndex = index
+    for(let i = 0; i < endToken.length; i++){
+        const index = context.source.indexOf(endToken[i])
+        if(index !== -1 && endIndex > index){ // endIndex 尽可能要小
+            endIndex = index
+        }
     }
 
     const content = parseTextData(context, endIndex)
