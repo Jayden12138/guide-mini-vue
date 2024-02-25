@@ -8,13 +8,13 @@ export enum TagType {
 
 export function baseParse(content: string){
     const context = createParserContext(content)
-    return createRoot(parseChildren(context))
+    return createRoot(parseChildren(context, ""))
 }
 
-function parseChildren(context){
+function parseChildren(context, parentTag){
     const nodes: any = []
 
-    while(!isEnd(context)){
+    while(!isEnd(context, parentTag)){
         let node;
         const s = context.source;
         if(s.startsWith("{{")){
@@ -35,14 +35,14 @@ function parseChildren(context){
     return nodes;
 }
 
-function isEnd(context){
+function isEnd(context, parentTag){
     // 停止循环标识
     // 1. source 处理完
     // 2. 处理结束标签
 
     // 2.
     const s = context.source
-    if(s.startsWith("</")){
+    if(parentTag && s.startsWith(`</${parentTag}>`)){
         return true
     }
 
@@ -85,7 +85,7 @@ function parseElement(context: any){
     const element: any = parseTag(context, TagType.Start) // <div>
 
     // 递归处理 children
-    element.children = parseChildren(context)
+    element.children = parseChildren(context, element.tag)
 
     parseTag(context, TagType.End) // </div>
 
