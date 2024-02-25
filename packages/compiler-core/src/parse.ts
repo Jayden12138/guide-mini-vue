@@ -8,11 +8,37 @@ export function baseParse(content: string){
 function parseChildren(context){
     const nodes: any = []
     let node;
-    if(context.source.startsWith("{{")){
+    const s = context.source;
+    if(s.startsWith("{{")){
         node = parseInterpolation(context)
+    }else if(s.startsWith("<")){
+        if(/[a-z]/i.test(s[1])){
+            console.log('parseElement')
+            node = parseElement(context)
+        }
     }
     nodes.push(node)
     return nodes;
+}
+
+function parseElement(context: any){
+    // Implement
+    // 1. 解析 tag
+    // 2. 删除处理完成的代码
+
+    // 1. 
+    const match: any = /^<([a-z]*)/i.exec(context.source);
+    const tag = match[1];
+
+    // 2.
+    advanceBy(context, match[0].length); // <div
+    advanceBy(context, 1); // >
+
+
+    return {
+        type: NodeTypes.ELEMENT,
+        tag
+    }
 }
 
 function parseInterpolation(context){
