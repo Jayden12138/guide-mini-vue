@@ -3,7 +3,16 @@ export function generate(ast){
 
     const {push} = context
 
-    push(`const { toDisplayString: _toDisplayString } = Vue`)
+    const VueBinging = "Vue"
+
+    // const helpers = ["toDisplayString"] // ast.helpers
+
+    const aliasHelpers = (s) => `${s}: _${s}`
+
+    push(`const { ${ast.helpers.map(aliasHelpers).join(", ")} } = ${VueBinging}`)
+
+    //  添加个回车
+    push("\n")
 
     // return 
     push("return ")
