@@ -5,7 +5,7 @@ describe('codegen', () => {
 
     it('string', () => {
         const ast = baseParse('hi')
-
+        
         const { code } = generate(ast)
 
         // 快照
