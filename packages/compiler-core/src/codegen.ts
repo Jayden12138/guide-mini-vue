@@ -1,3 +1,5 @@
+import { NodeTypes } from "./ast"
+
 export function generate(ast){
     const context = createCodegenContext()
 
@@ -8,6 +10,7 @@ export function generate(ast){
     const functionName = "render"
     const args = ["_ctx", "_cache"]
     const signature = args.join(", ")
+    console.log(ast)
 
     push(`function ${functionName}(${signature}) {`)
 
@@ -27,8 +30,11 @@ function genFunctionPreamble(ast: any, context: any) {
 
     // const helpers = ["toDisplayString"] // ast.helpers
     const aliasHelpers = (s) => `${s}: _${s}`
-
-    push(`const { ${ast.helpers.map(aliasHelpers).join(", ")} } = ${VueBinging}`)
+    if(ast.helpers.length > 0){
+        push(
+            `const { ${ast.helpers.map(aliasHelpers).join(", ")} } = ${VueBinging}`
+        )
+    }
 
     //  添加个回车
     push("\n")
@@ -48,6 +54,38 @@ function createCodegenContext(): any{
 }
 
 function genNode(node, context){
-    const {push} = context
+
+    switch (node.type) {
+        case NodeTypes.TEXT:
+            // text
+            genText(node, context)
+            break;
+        case NodeTypes.INTERPOLATION:
+            genInterpolation(node, context)
+            break;
+        case NodeTypes.SIMPLE_EXPRESSION:
+            genExpression(node, context)
+            break;
+        default:
+            break;
+    }
+}
+
+function genExpression(node, context){
+    const { push } = context
+
+    push(`${node.content}`)
+}
+
+function genInterpolation(node, context){
+    const { push } = context
+    console.log(node)
+    push(`_toDisplayString(`)
+    genNode(node.content, context)
+    push(`)`)
+}
+
+function genText(node: any, context: any) {
+    const { push } = context
     push(`'${node.content}'`)
 }
