@@ -1,3 +1,4 @@
+import { NodeTypes } from '../src/ast';
 import { baseParse } from '../src/parse'
 
 describe('parse', () => {
@@ -7,9 +8,9 @@ describe('parse', () => {
 
         // root
         expect(ast.children[0]).toStrictEqual({
-            type: 'interpolation', // 'interpolation'
+            type: NodeTypes.INTERPOLATION, // 'interpolation'
             content: {
-                type: 'simple_expression', // 'simple_expression'
+                type: NodeTypes.SIMPLE_EXPRESSION, // 'simple_expression'
                 content: 'message'
             }
         })
