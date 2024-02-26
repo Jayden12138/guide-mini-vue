@@ -7,17 +7,17 @@ import { initSlots } from "./componentSlots";
 export function createComponentInstance(vnode, parent) {
     // console.log('createComponentInstance', parent)
     const component = {
-      vnode,
+vnode,
       type: vnode.type,
       setupState: {},
         el: null,
       next: null,
-        proxy: {},
+      proxy: {},
         slots: {},
-        provides: parent ? parent.provides : {},
-        parent,
-        isMounted: false,
-        subTree: {},
+            provides: parent ? parent.provides : {},
+      parent,
+      isMounted: false,
+      subTree: {},
       emit: () => {},
     };
 
@@ -65,9 +65,12 @@ function handleSetupResult(instance, setupResult) {
 
 function finishComponentSetup(instance) {
     const Component = instance.type
-    if(Component.render) {
-        instance.render = Component.render
-    }
+    if(compiler && !Component.render) {
+        if(Component.template) {
+            Component.render = compiler(Component.template)
+        }
+    } 
+    instance.render = Component.render;
 }
 
 
@@ -80,4 +83,9 @@ export function setCurrentInstance(instance) {
     // 方便debugger，维护
     // 作为一个中间层
     currentInstance = instance
+}
+
+let compiler;
+export function registerRuntimeCompiler(_compiler) {
+    compiler = _compiler
 }

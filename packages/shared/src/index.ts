@@ -1,4 +1,5 @@
 export * from '../src/shapeFlags';
+export * from './toDisplayString'
 
 export const EMPTY_OBJ = {};
 

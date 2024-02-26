@@ -354,14 +354,14 @@ export function createRenderer(options) {
     container: any,
     anchor
   ) {
-    instance.update = effect(() => {
+    function componentUpdateFn() {
+      
       if (!instance.isMounted) {
-        // init 
+        // init
 
         const { proxy } = instance;
         const subTree = (instance.subTree =
-          instance.render.call(proxy)); // 存一下，之后update时作为旧节点信息
-        console.log(subTree);
+          instance.render.call(proxy, proxy)); // 存一下，之后update时作为旧节点信息
 
         // vnode -> patch
         // vnode -> element -> mountElement
@@ -374,7 +374,7 @@ export function createRenderer(options) {
         instance.isMounted = true;
       } else {
         // update
-        console.log('update')
+        console.log('update');
 
         const { next, vnode } = instance;
 
@@ -384,22 +384,19 @@ export function createRenderer(options) {
           updateComponentPreRender(instance, next);
         }
 
-
-
         const { proxy } = instance;
-        const subTree = instance.render.call(proxy);
+        const subTree = instance.render.call(proxy, proxy);
         const prevSubTree = instance.subTree;
 
-        instance.subTree = subTree // 更新subTree
+        instance.subTree = subTree; // 更新subTree
 
         console.log(subTree);
-        console.log(prevSubTree)
+        console.log(prevSubTree);
 
-        
         patch(prevSubTree, subTree, container, instance, anchor);
-
       }
-    }, {
+    }
+    instance.update = effect(componentUpdateFn, {
       scheduler() {
         // console.log('update - scheduler');
         queueJobs(instance.update)
