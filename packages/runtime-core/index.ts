@@ -14,3 +14,4 @@ export { provide, inject } from './apiInject'
 export { createRenderer } from './renderer'
 export { nextTick } from './scheduler'
 export { toDisplayString } from '../shared/src'
+export * from '../reactivity/src/index'; // runtime-dom <- runtime-core <- reactivity

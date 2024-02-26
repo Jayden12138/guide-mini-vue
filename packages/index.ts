@@ -6,7 +6,6 @@ export function add(a,b){
 import * as runtimeDom from './runtime-dom';
 
 export * from './runtime-dom/index';
-export * from './reactivity/src/index';
 
 import { baseCompile } from './compiler-core/src';
 import { registerRuntimeCompiler } from './runtime-dom';
