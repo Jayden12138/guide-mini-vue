@@ -49,6 +49,7 @@ function createCodegenContext(): any{
     const context = {
         code: "",
         push(source){
+            console.log('push: ', source)
             context.code += source
         },
         helper(key){
@@ -97,14 +98,34 @@ function genCompoundExpression(node, context){
 
 function genElement(node, context){
     const {push, helper} = context
-    const { tag, children } = node
+    const { tag, children, props } = node
     console.log('=====genElement: ', children)
     push(
-        `${helper(CREATE_ELEMENT_VNODE)}("${tag}"), null, `)
+        `${helper(CREATE_ELEMENT_VNODE)}(`)
 
-    genNode(children, context)
+    // genNode(children, context)
+    genNodeList(genNullable([tag, props, children]), context);
 
     push(")")
+}
+
+function genNodeList(nodes, context) {
+    const {push} = context
+    for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i]
+        if(isString(node)){
+            push(node)
+        } else {
+            genNode(node, context);
+        }
+        if (i < nodes.length - 1) {
+            push(', ');
+        }
+    }
+}
+
+function genNullable(args: any) {
+    return args.map(arg => arg || "null")
 }
 
 function genExpression(node, context){

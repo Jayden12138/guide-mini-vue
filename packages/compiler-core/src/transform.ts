@@ -45,9 +45,13 @@ function createTransformContext(root: any, options: any){
 function traverseNode(node: any, context){
 
     const nodeTransforms = context.nodeTransforms;
+    const exitFns: any = []
     for(let i = 0; i < nodeTransforms.length; i++){
         const transform = nodeTransforms[i]
-        transform(node, context)
+        const onExit = transform(node, context)
+        if(onExit){
+            exitFns.push(onExit)
+        }
     }
 
     const { type } = node
@@ -60,6 +64,11 @@ function traverseNode(node: any, context){
             traverseChildren(node, context);
         default:
             break;
+    }
+
+    let i = exitFns.length
+    while(i--){
+        exitFns[i]()
     }
 }
 
