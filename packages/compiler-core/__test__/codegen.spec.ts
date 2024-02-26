@@ -37,7 +37,7 @@ describe('codegen', () => {
         transform(ast, {
             nodeTransforms: [transformExpression, transformElement, transformText]
         })
-        console.log('ast----: ', ast, ast.codegenNode.children)
+        
         const { code } = generate(ast)
 
         expect(code).toMatchSnapshot()

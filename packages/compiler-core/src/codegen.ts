@@ -12,7 +12,6 @@ export function generate(ast){
     const functionName = "render"
     const args = ["_ctx", "_cache"]
     const signature = args.join(", ")
-    console.log(ast)
 
     push(`function ${functionName}(${signature}) {`)
 
@@ -49,7 +48,6 @@ function createCodegenContext(): any{
     const context = {
         code: "",
         push(source){
-            console.log('push: ', source)
             context.code += source
         },
         helper(key){
@@ -99,7 +97,6 @@ function genCompoundExpression(node, context){
 function genElement(node, context){
     const {push, helper} = context
     const { tag, children, props } = node
-    console.log('=====genElement: ', children)
     push(
         `${helper(CREATE_ELEMENT_VNODE)}(`)
 
@@ -136,7 +133,6 @@ function genExpression(node, context){
 
 function genInterpolation(node, context){
     const { push, helper } = context
-    console.log(node)
     push(`${helper(TO_DISPLAY_STRING)}(`)
     genNode(node.content, context)
     push(`)`)
