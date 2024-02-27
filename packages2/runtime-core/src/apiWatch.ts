@@ -1,14 +1,29 @@
 import { ReactiveEffect } from "../../reactivity/src/effect";
 import { queuePreFlushCb } from "./scheduler"
 
-export function watchEffect(fn) {
+export function watchEffect(source) {
     function job() {
         effect.run()
     }
 
-    const effect = new ReactiveEffect(fn, () => {
-        queuePreFlushCb(job)
-    })
+    let cleanup
+    const onCleanup = function (fn) {
+        // fn();
+        cleanup = fn
+        effect.onStop = () => {
+            fn()
+        }
+    };
+    function getter() {
+        if(cleanup) {
+            cleanup()
+        }
+        source(onCleanup)
+    }
+
+    const effect = new ReactiveEffect(getter, () => {
+      queuePreFlushCb(job);
+    });
 
     effect.run()
 
