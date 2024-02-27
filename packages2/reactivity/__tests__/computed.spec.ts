@@ -1,4 +1,5 @@
 import { computed, reactive } from "../src"
+import { vi } from 'vitest'
 
 
 describe('computed', () => {
@@ -10,7 +11,7 @@ describe('computed', () => {
 
     it('should compute lazily', () => {
         const value = reactive({ foo: 1 })
-        const getter = jest.fn(() => value.foo)
+        const getter = vi.fn(() => value.foo);
         const cValue = computed(getter)
 
         // lazy

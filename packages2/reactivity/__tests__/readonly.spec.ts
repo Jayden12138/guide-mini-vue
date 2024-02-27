@@ -1,4 +1,5 @@
 import { isReadonly, readonly, isProxy } from "../src"
+import {vi} from 'vitest'
 
 describe('readonly', () => {
 
@@ -15,7 +16,7 @@ describe('readonly', () => {
     })
 
     it('should not allow reassignment', () => {
-        console.warn = jest.fn()
+        console.warn = vi.fn()
         const original = { foo: 1 }
         const observed = readonly(original)
         observed.foo = 2

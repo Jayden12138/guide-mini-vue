@@ -1,3 +1,4 @@
+import { vi } from "vitest"
 import { effect, reactive, stop } from "../src"
 
 describe('effect', () => {
@@ -18,7 +19,7 @@ describe('effect', () => {
     it('scheduler', () => {
         let dummy;
         let run: any;
-        const scheduler = jest.fn(() => {
+        const scheduler = vi.fn(() => {
           run = runner;
         });
         const obj = reactive({ foo: 1 });
@@ -61,7 +62,7 @@ describe('effect', () => {
   });
 
   it('events: onStop', () => {
-    const onStop = jest.fn();
+    const onStop = vi.fn();
     const runner = effect(() => {}, {
       onStop,
     });

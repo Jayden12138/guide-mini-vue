@@ -1,4 +1,5 @@
 import { isReadonly, shallowReadonly } from "../src"
+import { vi } from 'vitest'
 
 describe('shallowReadonly', () => {
 
@@ -12,7 +13,7 @@ describe('shallowReadonly', () => {
     })
 
         it('should not allow reassignment', () => {
-          console.warn = jest.fn();
+          console.warn = vi.fn();
           const original = { foo: 1 };
           const observed = shallowReadonly(original);
           observed.foo = 2;
