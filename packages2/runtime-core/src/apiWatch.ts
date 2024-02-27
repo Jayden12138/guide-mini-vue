@@ -9,8 +9,7 @@ export function watchEffect(source) {
     let cleanup
     const onCleanup = function (fn) {
         // fn();
-        cleanup = fn
-        effect.onStop = () => {
+        cleanup = effect.onStop = () => {
             fn()
         }
     };
