@@ -1,6 +1,9 @@
+import { extend } from '../../shared'
+
 class ReactiveEffect {
 	active = true
 	deps = []
+	onStop?: () => void
 	private _fn: any
 	constructor(fn, public scheduler?) {
 		this._fn = fn
@@ -14,6 +17,9 @@ class ReactiveEffect {
 	stop() {
 		if (this.active) {
 			cleanupEffect(this)
+			if (this.onStop) {
+				this.onStop()
+			}
 			this.active = false
 		}
 	}
@@ -27,6 +33,10 @@ function cleanupEffect(effect) {
 
 export function effect(fn, options: any = {}) {
 	const _effect = new ReactiveEffect(fn, options.scheduler)
+
+	// _effect.onStop = options.onStop
+	// Object.assign(_effect, options)
+	extend(_effect, options)
 
 	_effect.run()
 
