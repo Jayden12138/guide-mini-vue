@@ -2,7 +2,7 @@ import { extend } from '../../shared'
 
 let activeEffect
 let shouldTrack
-class ReactiveEffect {
+export class ReactiveEffect {
 	active = true
 	deps = []
 	onStop?: () => void
