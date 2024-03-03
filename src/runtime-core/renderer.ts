@@ -19,7 +19,7 @@ function processElement(vnode, container) {
 }
 
 function mountElement(vnode, container) {
-	const el = document.createElement(vnode.type)
+	const el = (vnode.el = document.createElement(vnode.type))
 
 	// string | array
 	const { children } = vnode
@@ -50,24 +50,28 @@ export function processComponent(vnode, container) {
 	mountComponent(vnode, container)
 }
 
-export function mountComponent(vnode, container) {
+export function mountComponent(initialVNode, container) {
 	// instance
 	// setup
 	// setupRenderEffect
 
 	// instance
-	const instance = createComponentInstance(vnode)
+	const instance = createComponentInstance(initialVNode)
 
 	// setup 去配置 render 以及其他 props 、slots 等
 	setupComponent(instance, container)
 
 	// setupRenderEffect 调用 render
-	setupRenderEffect(instance, container)
+	setupRenderEffect(instance, initialVNode, container)
 }
 
-export function setupRenderEffect(instance, container) {
+export function setupRenderEffect(instance, initialVNode, container) {
 	// 执行 render
-	const subTree = instance.render()
+	const { proxy } = instance
+	const subTree = instance.render.call(proxy)
 
 	patch(subTree, container)
+
+	// 处理完
+	initialVNode.el = subTree.el
 }

@@ -1,6 +1,8 @@
 import { h } from '../../lib/guide-mini-vue.esm.js'
+window.self = null
 export const App = {
 	render() {
+		window.self = this
 		return h(
 			'div',
 			{
@@ -8,16 +10,16 @@ export const App = {
 				class: ['red', 'hard'],
 			},
 			// this
-			// 'hi, ' + this.msg
+			'hi, ' + this.msg
 
 			// string
 			// 'hi jayden',
 
 			// children
-			[
-				h('p', { class: 'red' }, 'hi'),
-				h('p', { class: 'blue' }, 'jayden'),
-			]
+			// [
+			// 	h('p', { class: 'red' }, 'hi'),
+			// 	h('p', { class: 'blue' }, 'jayden'),
+			// ]
 		)
 	},
 	setup() {
