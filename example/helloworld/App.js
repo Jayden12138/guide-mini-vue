@@ -1,4 +1,5 @@
 import { h } from '../../lib/guide-mini-vue.esm.js'
+import { Foo } from './Foo.js'
 window.self = null
 export const App = {
 	render() {
@@ -16,7 +17,7 @@ export const App = {
 				},
 			},
 			// this
-			'hi, ' + this.msg
+			// 'hi, ' + this.msg
 
 			// string
 			// 'hi jayden',
@@ -26,6 +27,14 @@ export const App = {
 			// 	h('p', { class: 'red' }, 'hi'),
 			// 	h('p', { class: 'blue' }, 'jayden'),
 			// ]
+
+			// props
+			[
+				h('div', {}, 'hi, ' + this.msg),
+				h(Foo, {
+					count: 1,
+				}),
+			]
 		)
 	},
 	setup() {
