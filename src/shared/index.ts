@@ -5,3 +5,5 @@ export const isObject = val => {
 }
 
 export const hasChanged = Object.is
+
+export const isOn = (val: string) => /^on[A-Z]/.test(val)
