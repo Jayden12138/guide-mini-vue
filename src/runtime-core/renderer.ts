@@ -1,105 +1,113 @@
 import { ShapeFlags } from '../shared/ShapeFlags'
-import { isOn } from '../shared/index'
 import { createComponentInstance, setupComponent } from './component'
+import { createAppAPI } from './createApp'
 import { Fragment, Text } from './vnode'
 
-export function render(vnode, container) {
-	patch(vnode, container, null)
-}
+export function createRenderer(options) {
+	const {
+		createElement: hostCreateElement,
+		patchProp: hostPatchProp,
+		insert: hostInsert,
+	} = options
 
-export function patch(vnode, container, parentComponent) {
-	const { shapeFlag, type } = vnode
-
-	switch (type) {
-		case Fragment:
-			processFragment(vnode, container, parentComponent)
-			break
-		case Text:
-			processText(vnode, container)
-			break
-		default:
-			if (shapeFlag & ShapeFlags.ELEMENT) {
-				processElement(vnode, container, parentComponent)
-			} else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-				processComponent(vnode, container, parentComponent)
-			}
-			break
-	}
-}
-
-function processText(vnode, container) {
-	const { children } = vnode
-	const textNode = (vnode.el = document.createTextNode(children))
-	container.append(textNode)
-}
-
-function processFragment(vnode, container, parentComponent) {
-	mountChildren(vnode, container, parentComponent)
-}
-
-function processElement(vnode, container, parentComponent) {
-	mountElement(vnode, container, parentComponent)
-}
-
-function mountElement(vnode, container, parentComponent) {
-	const el = (vnode.el = document.createElement(vnode.type))
-
-	// string | array
-	const { children, shapeFlag } = vnode
-	if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
-		el.textContent = children
-	} else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-		mountChildren(vnode, el, parentComponent)
+	function render(vnode, container) {
+		patch(vnode, container, null)
 	}
 
-	// props
-	const { props } = vnode
-	for (const key in props) {
-		const val = props[key]
-		if (isOn(key)) {
-			const event = key.slice(2).toLowerCase()
-			el.addEventListener(event, val)
-		} else {
-			el.setAttribute(key, val)
+	function patch(vnode, container, parentComponent) {
+		const { shapeFlag, type } = vnode
+
+		switch (type) {
+			case Fragment:
+				processFragment(vnode, container, parentComponent)
+				break
+			case Text:
+				processText(vnode, container)
+				break
+			default:
+				if (shapeFlag & ShapeFlags.ELEMENT) {
+					processElement(vnode, container, parentComponent)
+				} else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+					processComponent(vnode, container, parentComponent)
+				}
+				break
 		}
 	}
 
-	container.append(el)
-}
+	function processText(vnode, container) {
+		const { children } = vnode
+		const textNode = (vnode.el = document.createTextNode(children))
+		container.append(textNode)
+	}
 
-function mountChildren(vnode, container, parentComponent) {
-	vnode.children.forEach(v => {
-		patch(v, container, parentComponent)
-	})
-}
+	function processFragment(vnode, container, parentComponent) {
+		mountChildren(vnode, container, parentComponent)
+	}
 
-export function processComponent(vnode, container, parentComponent) {
-	// mount | update
-	mountComponent(vnode, container, parentComponent)
-}
+	function processElement(vnode, container, parentComponent) {
+		mountElement(vnode, container, parentComponent)
+	}
 
-export function mountComponent(initialVNode, container, parentComponent) {
-	// instance
-	// setup
-	// setupRenderEffect
+	function mountElement(vnode, container, parentComponent) {
+		const el = (vnode.el = hostCreateElement(vnode.type))
 
-	// instance
-	const instance = createComponentInstance(initialVNode, parentComponent)
+		// string | array
+		const { children, shapeFlag } = vnode
+		if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+			el.textContent = children
+		} else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+			mountChildren(vnode, el, parentComponent)
+		}
 
-	// setup 去配置 render 以及其他 props 、slots 等
-	setupComponent(instance, container)
+		// props
+		const { props } = vnode
+		for (const key in props) {
+			const val = props[key]
 
-	// setupRenderEffect 调用 render
-	setupRenderEffect(instance, initialVNode, container)
-}
+			hostPatchProp(el, key, val)
+		}
 
-export function setupRenderEffect(instance, initialVNode, container) {
-	// 执行 render
-	const { proxy } = instance
-	const subTree = instance.render.call(proxy)
+		hostInsert(el, container)
+	}
 
-	patch(subTree, container, instance)
+	function mountChildren(vnode, container, parentComponent) {
+		vnode.children.forEach(v => {
+			patch(v, container, parentComponent)
+		})
+	}
 
-	// 处理完
-	initialVNode.el = subTree.el
+	function processComponent(vnode, container, parentComponent) {
+		// mount | update
+		mountComponent(vnode, container, parentComponent)
+	}
+
+	function mountComponent(initialVNode, container, parentComponent) {
+		// instance
+		// setup
+		// setupRenderEffect
+
+		// instance
+		const instance = createComponentInstance(initialVNode, parentComponent)
+
+		// setup 去配置 render 以及其他 props 、slots 等
+		setupComponent(instance, container)
+
+		// setupRenderEffect 调用 render
+		setupRenderEffect(instance, initialVNode, container)
+	}
+
+	function setupRenderEffect(instance, initialVNode, container) {
+		// 执行 render
+		const { proxy } = instance
+		const subTree = instance.render.call(proxy)
+
+		patch(subTree, container, instance)
+
+		// 处理完
+		initialVNode.el = subTree.el
+	}
+
+	return {
+		createApp: createAppAPI(render),
+	}
 }
