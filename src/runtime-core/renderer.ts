@@ -15,10 +15,10 @@ export function createRenderer(options) {
 	} = options
 
 	function render(vnode, container) {
-		patch(null, vnode, container, null)
+		patch(null, vnode, container, null, null)
 	}
 
-	function patch(n1, n2, container, parentComponent) {
+	function patch(n1, n2, container, parentComponent, anchor) {
 		const { shapeFlag, type } = n2
 
 		switch (type) {
@@ -30,7 +30,7 @@ export function createRenderer(options) {
 				break
 			default:
 				if (shapeFlag & ShapeFlags.ELEMENT) {
-					processElement(n1, n2, container, parentComponent)
+					processElement(n1, n2, container, parentComponent, anchor)
 				} else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
 					processComponent(n1, n2, container, parentComponent)
 				}
@@ -48,17 +48,17 @@ export function createRenderer(options) {
 		mountChildren(n2.children, container, parentComponent)
 	}
 
-	function processElement(n1, n2, container, parentComponent) {
+	function processElement(n1, n2, container, parentComponent, anchor) {
 		if (!n1) {
 			// mount
-			mountElement(n1, n2, container, parentComponent)
+			mountElement(n1, n2, container, parentComponent, anchor)
 		} else {
 			// update
-			patchElement(n1, n2, container, parentComponent)
+			patchElement(n1, n2, container, parentComponent, anchor)
 		}
 	}
 
-	function patchElement(n1, n2, container, parentComponent) {
+	function patchElement(n1, n2, container, parentComponent, anchor) {
 		console.log('patchElement')
 		console.log('n1: ', n1)
 		console.log('n2: ', n2)
@@ -68,11 +68,11 @@ export function createRenderer(options) {
 
 		const el = (n2.el = n1.el)
 
-		patchChildren(n1, n2, el, parentComponent)
+		patchChildren(n1, n2, el, parentComponent, anchor)
 		patchProps(el, prevProps, nextProps)
 	}
 
-	function patchChildren(n1, n2, container, parentComponent) {
+	function patchChildren(n1, n2, container, parentComponent, parentAnchor) {
 		const { shapeFlag: prevShapFlag, children: c1 } = n1
 		const { shapeFlag: nextShapFlag, children: c2 } = n2
 
@@ -84,6 +84,13 @@ export function createRenderer(options) {
 				hostSetElementText(container, c2)
 			} else {
 				// array -> array
+				patchKeyedChildren(
+					c1,
+					c2,
+					container,
+					parentComponent,
+					parentAnchor
+				)
 			}
 		} else {
 			if (nextShapFlag & ShapeFlags.TEXT_CHILDREN) {
@@ -96,6 +103,79 @@ export function createRenderer(options) {
 				mountChildren(c2, container, parentComponent)
 			}
 		}
+	}
+
+	function patchKeyedChildren(
+		c1,
+		c2,
+		container,
+		parentComponent,
+		parentAnchor
+	) {
+		let i = 0
+		let e1 = c1.length - 1
+		let e2 = c2.length - 1
+
+		// 左端对比
+		while (i <= e2 && i <= e1) {
+			let n1 = c1[i]
+			let n2 = c2[i]
+			if (isSame(n1, n2)) {
+				patch(n1, n2, container, parentComponent, parentAnchor)
+				i++
+			} else {
+				break
+			}
+		}
+
+		console.log(i, e1, e2)
+
+		// 右端对比
+		while (i <= e2 && i <= e1) {
+			let n1 = c1[e1]
+			let n2 = c2[e2]
+			if (isSame(n1, n2)) {
+				patch(n1, n2, container, parentComponent, parentAnchor)
+				e1--
+				e2--
+			} else {
+				break
+			}
+		}
+
+		console.log(i, e1, e2)
+
+		if (i > e1) {
+			if (i <= e2) {
+				// i > e1 && i <= e2
+				// 新的比老的长(创建新的)
+
+				for (let j = e2; j >= i; j--) {
+					const anchor = c2[e2 + 1].el || null
+					patch(null, c2[j], container, parentComponent, anchor)
+					e2--
+				}
+			} else {
+				// i > e1 && i > e2
+				// 不存在这种情况
+			}
+		} else {
+			if (i > e2) {
+				// i > e2 && i <= e1
+				// 老的比新的长
+				for (let j = i; j <= e1; j++) {
+					// c1[j]
+					hostRemove(c1[j].el)
+				}
+			} else {
+				// i <= e1 && i <= e2
+				// 乱序
+			}
+		}
+	}
+
+	function isSame(n1, n2) {
+		return n1.type === n2.type && n1.key === n2.key
 	}
 
 	function unmountChildren(children) {
@@ -125,7 +205,7 @@ export function createRenderer(options) {
 		}
 	}
 
-	function mountElement(n1, n2, container, parentComponent) {
+	function mountElement(n1, n2, container, parentComponent, anchor) {
 		const el = (n2.el = hostCreateElement(n2.type))
 
 		// string | array
@@ -144,12 +224,12 @@ export function createRenderer(options) {
 			hostPatchProp(el, key, null, val)
 		}
 
-		hostInsert(el, container)
+		hostInsert(el, container, anchor)
 	}
 
 	function mountChildren(children, container, parentComponent) {
 		children.forEach(v => {
-			patch(null, v, container, parentComponent)
+			patch(null, v, container, parentComponent, null)
 		})
 	}
 
@@ -182,7 +262,7 @@ export function createRenderer(options) {
 				const subTree = (instance.subTree = instance.render.call(proxy))
 				console.log(subTree)
 
-				patch(null, subTree, container, instance)
+				patch(null, subTree, container, instance, null)
 
 				instance.isMounted = true
 				// 处理完
@@ -193,7 +273,7 @@ export function createRenderer(options) {
 				const subTree = instance.render.call(proxy)
 				const prevSubTree = instance.subTree
 
-				patch(prevSubTree, subTree, container, instance)
+				patch(prevSubTree, subTree, container, instance, null)
 
 				// update
 				instance.subTree = subTree
