@@ -10,3 +10,5 @@ export const isOn = (val: string) => /^on[A-Z]/.test(val)
 
 export const hasOwn = (val, key) =>
 	Object.prototype.hasOwnProperty.call(val, key)
+
+export const EMPTY_OBJ = {}

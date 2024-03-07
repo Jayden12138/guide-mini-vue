@@ -1,5 +1,6 @@
 import { effect } from '../reactivity/src/index'
 import { ShapeFlags } from '../shared/ShapeFlags'
+import { EMPTY_OBJ } from '../shared/index'
 import { createComponentInstance, setupComponent } from './component'
 import { createAppAPI } from './createApp'
 import { Fragment, Text } from './vnode'
@@ -59,6 +60,34 @@ export function createRenderer(options) {
 		console.log('patchElement')
 		console.log('n1: ', n1)
 		console.log('n2: ', n2)
+
+		const prevProps = n1.props || EMPTY_OBJ
+		const nextProps = n2.props || EMPTY_OBJ
+
+		const el = (n2.el = n1.el)
+
+		patchProps(el, prevProps, nextProps)
+	}
+
+	function patchProps(el, prevProps, nextProps) {
+		if (prevProps !== nextProps) {
+			for (let key in nextProps) {
+				const nextProp = nextProps[key]
+				const prevProp = prevProps[key]
+
+				if (nextProp !== prevProp) {
+					hostPatchProp(el, key, prevProp, nextProp)
+				}
+			}
+
+			if (prevProps !== EMPTY_OBJ) {
+				for (let key in prevProps) {
+					if (!(key in nextProps)) {
+						hostPatchProp(el, key, prevProps[key], null)
+					}
+				}
+			}
+		}
 	}
 
 	function mountElement(n1, n2, container, parentComponent) {
@@ -77,7 +106,7 @@ export function createRenderer(options) {
 		for (const key in props) {
 			const val = props[key]
 
-			hostPatchProp(el, key, val)
+			hostPatchProp(el, key, null, val)
 		}
 
 		hostInsert(el, container)
