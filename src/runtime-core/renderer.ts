@@ -114,62 +114,213 @@ export function createRenderer(options) {
 	) {
 		let i = 0
 		let e1 = c1.length - 1
-		let e2 = c2.length - 1
+		let l2 = c2.length
+		let e2 = l2 - 1
 
-		// 左端对比
-		while (i <= e2 && i <= e1) {
-			let n1 = c1[i]
-			let n2 = c2[i]
-			if (isSame(n1, n2)) {
-				patch(n1, n2, container, parentComponent, parentAnchor)
-				i++
+		// 1. sync from start
+		// (a b) c
+		// (a b)
+		while (i <= e1 && i <= e2) {
+			const prevChild = c1[i]
+			const nextChild = c2[i]
+
+			if (isSame(prevChild, nextChild)) {
+				patch(
+					prevChild,
+					nextChild,
+					container,
+					parentComponent,
+					parentAnchor
+				)
 			} else {
 				break
 			}
+			i++
 		}
 
-		console.log(i, e1, e2)
+		// 2. sync from end
+		// a (b c)
+		// (b c)
+		while (i <= e1 && i <= e2) {
+			const prevChild = c1[e1]
+			const nextChild = c2[e2]
 
-		// 右端对比
-		while (i <= e2 && i <= e1) {
-			let n1 = c1[e1]
-			let n2 = c2[e2]
-			if (isSame(n1, n2)) {
-				patch(n1, n2, container, parentComponent, parentAnchor)
-				e1--
-				e2--
+			if (isSame(prevChild, nextChild)) {
+				patch(
+					prevChild,
+					nextChild,
+					container,
+					parentComponent,
+					parentAnchor
+				)
 			} else {
 				break
 			}
+			e1--
+			e2--
 		}
 
-		console.log(i, e1, e2)
-
+		// 3. common sequence + mount
+		// (a b)
+		// (a b) c d e
+		// i = 2, e1 = 1, e2 = 4
+		// (a b)
+		// c d e (a b)
+		// i = 0, e1 = -1, e2 = 2
 		if (i > e1) {
 			if (i <= e2) {
-				// i > e1 && i <= e2
-				// 新的比老的长(创建新的)
-
+				// e1 < i <= e2
 				for (let j = e2; j >= i; j--) {
-					const anchor = c2[e2 + 1].el || null
-					patch(null, c2[j], container, parentComponent, anchor)
-					e2--
+					const nextChild = c2[j]
+					const nextAnchor = j + 1 < l2 ? c2[j + 1].el : parentAnchor
+					// mount
+					patch(
+						null,
+						nextChild,
+						container,
+						parentComponent,
+						nextAnchor
+					)
 				}
-			} else {
-				// i > e1 && i > e2
-				// 不存在这种情况
 			}
-		} else {
-			if (i > e2) {
-				// i > e2 && i <= e1
-				// 老的比新的长
-				for (let j = i; j <= e1; j++) {
-					// c1[j]
-					hostRemove(c1[j].el)
+		}
+
+		// 4. common sequence + unmoun
+		// (a b) c d e
+		// (a b)
+		// i = 2, e1 = 4, e2 = 1
+		else if (i > e2) {
+			// i <= e1 && i > e2
+			for (let j = i; j <= e1; j++) {
+				const nextChild = c1[j]
+				hostRemove(nextChild.el)
+			}
+		}
+
+		// TODO: 5. unknown sequence
+		// 删除
+		// a b (c d) f g
+		// a b (e c) f g
+
+		// 删除 patched、toBePatched
+		// a b (c e d) f g
+		// a b (e c) f g
+
+		// 移动
+		// a b (c d e) f g
+		// a b (e c d) f g
+
+		// 新增
+		// a b (c e) f g
+		// a b (e c d) f g
+
+		// 综合
+		// a b (c d e z) f g
+		// a b (d c y e) f g
+		else {
+			// i <= e1 && i <= e2
+			let s1 = i
+			let s2 = i
+
+			// 5.1 keyToNewIndexMap
+
+			const keyToNewIndexMap = new Map()
+			for (let j = s2; j <= e2; j++) {
+				let nextChild = c2[j]
+				if (nextChild.key != null) {
+					if (keyToNewIndexMap.has(nextChild.key)) {
+						console.warn(
+							`Duplicate keys found during update:`,
+							JSON.stringify(nextChild.key),
+							`Make sure keys are unique.`
+						)
+					}
+					keyToNewIndexMap.set(nextChild.key, j)
 				}
-			} else {
-				// i <= e1 && i <= e2
-				// 乱序
+			}
+
+			// 5.2 newIndexToOldIndexMap
+
+			let patched = 0
+			let toBePatched = e2 - i + 1
+			let moved = false
+			let maxNewIndexSoFar = 0
+
+			const newIndexToOldIndexMap = new Array(toBePatched)
+			newIndexToOldIndexMap.fill(0)
+
+			for (let j = s1; j <= e1; j++) {
+				const prevChild = c1[j]
+				if (patched >= toBePatched) {
+					hostRemove(prevChild.el)
+					continue
+				}
+
+				let newIndex
+				if (prevChild.key != null) {
+					newIndex = keyToNewIndexMap.get(prevChild.key)
+				} else {
+					for (let k = s2; k <= e2; k++) {
+						const nextChild = c2[k]
+						if (
+							newIndexToOldIndexMap[k - s2] === 0 &&
+							isSame(nextChild, prevChild)
+						) {
+							newIndex = k
+							break
+						}
+					}
+				}
+
+				if (newIndex != null) {
+					newIndexToOldIndexMap[newIndex - s2] = j + 1
+					if (newIndex >= maxNewIndexSoFar) {
+						maxNewIndexSoFar = newIndex
+					} else {
+						moved = true
+					}
+					patch(
+						prevChild,
+						c2[newIndex],
+						container,
+						parentComponent,
+						parentAnchor
+					)
+					patched++
+				} else {
+					hostRemove(prevChild.el)
+				}
+			}
+
+			// 5.3 increasingNewIndexSequence
+
+			const increasingNewIndexSequence = moved
+				? getSequence(newIndexToOldIndexMap)
+				: []
+			let j = increasingNewIndexSequence.length - 1
+
+			for (let k = toBePatched - 1; k >= 0; k--) {
+				let newIndex = k + s2
+				const nextChild = c2[newIndex]
+				const nextAnchor =
+					newIndex + 1 < l2 ? c2[newIndex + 1].el : null
+
+				if (newIndexToOldIndexMap[k] === 0) {
+					// 新增
+					patch(
+						null,
+						nextChild,
+						container,
+						parentComponent,
+						nextAnchor
+					)
+				} else if (moved) {
+					if (increasingNewIndexSequence[j] === k) {
+						j--
+					} else {
+						hostInsert(nextChild.el, container, nextAnchor)
+					}
+				}
 			}
 		}
 	}
@@ -284,4 +435,45 @@ export function createRenderer(options) {
 	return {
 		createApp: createAppAPI(render),
 	}
+}
+
+function getSequence(arr: number[]): number[] {
+	const p = arr.slice()
+	const result = [0]
+	let i, j, u, v, c
+	const len = arr.length
+	for (i = 0; i < len; i++) {
+		const arrI = arr[i]
+		if (arrI !== 0) {
+			j = result[result.length - 1]
+			if (arr[j] < arrI) {
+				p[i] = j
+				result.push(i)
+				continue
+			}
+			u = 0
+			v = result.length - 1
+			while (u < v) {
+				c = (u + v) >> 1
+				if (arr[result[c]] < arrI) {
+					u = c + 1
+				} else {
+					v = c
+				}
+			}
+			if (arrI < arr[result[u]]) {
+				if (u > 0) {
+					p[i] = result[u - 1]
+				}
+				result[u] = i
+			}
+		}
+	}
+	u = result.length
+	v = result[u - 1]
+	while (u-- > 0) {
+		result[u] = v
+		v = p[v]
+	}
+	return result
 }

@@ -87,45 +87,45 @@ import { h, ref } from '../../lib/guide-mini-vue.esm.js'
 // a b (e c) f g
 // D 节点在新的里面没有需要删除
 // C 节点 props 也发生了变化
-const prevChildren = [
-	h('p', { key: 'A' }, 'A'),
-	h('p', { key: 'B' }, 'B'),
-	h('p', { key: 'C', id: 'c-prev' }, 'C'),
-	h('p', { key: 'D' }, 'D'),
-	h('p', { key: 'F' }, 'F'),
-	h('p', { key: 'G' }, 'G'),
-]
-const nextChildren = [
-	h('p', { key: 'A' }, 'A'),
-	h('p', { key: 'B' }, 'B'),
-	h('p', { key: 'E' }, 'E'),
-	h('p', { key: 'C', id: 'c-next' }, 'C'),
-	h('p', { key: 'F' }, 'F'),
-	h('p', { key: 'G' }, 'G'),
-]
+// const prevChildren = [
+// 	h('p', { key: 'A' }, 'A'),
+// 	h('p', { key: 'B' }, 'B'),
+// 	h('p', { key: 'C', id: 'c-prev' }, 'C'),
+// 	h('p', { key: 'D' }, 'D'),
+// 	h('p', { key: 'F' }, 'F'),
+// 	h('p', { key: 'G' }, 'G'),
+// ]
+// const nextChildren = [
+// 	h('p', { key: 'A' }, 'A'),
+// 	h('p', { key: 'B' }, 'B'),
+// 	h('p', { key: 'E' }, 'E'),
+// 	h('p', { key: 'C', id: 'c-next' }, 'C'),
+// 	h('p', { key: 'F' }, 'F'),
+// 	h('p', { key: 'G' }, 'G'),
+// ]
 
 // 5.1
 // a b (c e d) f g
 // a b (e c) f g
 // 当所有的新的节点都对比完了，老节点还存在元素，这些元素都可以被删除
 // const prevChildren = [
-//     h('p', { key: 'A' }, "A"),
-//     h('p', { key: 'B' }, "B"),
-//     h('p', { key: 'C', id: 'c-prev' }, "C"),
-//     h('p', { key: 'E' }, "E"),
-//     h('p', { key: 'D' }, "D"),
-//     h('p', { key: 'Z' }, "Z"),
-//     h('p', { key: 'X' }, "X"),
-//     h('p', { key: 'F' }, "F"),
-//     h('p', { key: 'G' }, "G"),
+// 	h('p', { key: 'A' }, 'A'),
+// 	h('p', { key: 'B' }, 'B'),
+// 	h('p', { key: 'C', id: 'c-prev' }, 'C'),
+// 	h('p', { key: 'E' }, 'E'),
+// 	h('p', { key: 'D' }, 'D'),
+// 	h('p', { key: 'Z' }, 'Z'),
+// 	h('p', { key: 'X' }, 'X'),
+// 	h('p', { key: 'F' }, 'F'),
+// 	h('p', { key: 'G' }, 'G'),
 // ]
 // const nextChildren = [
-//     h('p', { key: 'A' }, "A"),
-//     h('p', { key: 'B' }, "B"),
-//     h('p', { key: 'E' }, "E"),
-//     h('p', { key: 'C', id: 'c-next' }, "C"),
-//     h('p', { key: 'F' }, "F"),
-//     h('p', { key: 'G' }, "G"),
+// 	h('p', { key: 'A' }, 'A'),
+// 	h('p', { key: 'B' }, 'B'),
+// 	h('p', { key: 'E' }, 'E'),
+// 	h('p', { key: 'C', id: 'c-next' }, 'C'),
+// 	h('p', { key: 'F' }, 'F'),
+// 	h('p', { key: 'G' }, 'G'),
 // ]
 
 // 5.2 移动
@@ -134,22 +134,22 @@ const nextChildren = [
 // 只需要移动e
 // 寻找最长递增子序列 这些是不需要改变的，除了这个子序列之外的是不稳定的元素，需要进行移动 （ 算法： 最长递增子序列）
 // const prevChildren = [
-//     h('p', { key: 'A' }, "A"),
-//     h('p', { key: 'B' }, "B"),
-//     h('p', { key: 'C' }, "C"),
-//     h('p', { key: 'D' }, "D"),
-//     h('p', { key: 'E' }, "E"),
-//     h('p', { key: 'F' }, "F"),
-//     h('p', { key: 'G' }, "G"),
+// 	h('p', { key: 'A' }, 'A'),
+// 	h('p', { key: 'B' }, 'B'),
+// 	h('p', { key: 'C' }, 'C'),
+// 	h('p', { key: 'D' }, 'D'),
+// 	h('p', { key: 'E' }, 'E'),
+// 	h('p', { key: 'F' }, 'F'),
+// 	h('p', { key: 'G' }, 'G'),
 // ]
 // const nextChildren = [
-//     h('p', { key: 'A' }, "A"),
-//     h('p', { key: 'B' }, "B"),
-//     h('p', { key: 'E' }, "E"),
-//     h('p', { key: 'C' }, "C"),
-//     h('p', { key: 'D' }, "D"),
-//     h('p', { key: 'F' }, "F"),
-//     h('p', { key: 'G' }, "G"),
+// 	h('p', { key: 'A' }, 'A'),
+// 	h('p', { key: 'B' }, 'B'),
+// 	h('p', { key: 'E' }, 'E'),
+// 	h('p', { key: 'C' }, 'C'),
+// 	h('p', { key: 'D' }, 'D'),
+// 	h('p', { key: 'F' }, 'F'),
+// 	h('p', { key: 'G' }, 'G'),
 // ]
 
 // 5.3 创建
@@ -157,21 +157,21 @@ const nextChildren = [
 // a b (e c d) f g
 // d 节点在老的节点中不存在 新的里面存在，所以需要创建
 // const prevChildren = [
-//     h('p', { key: 'A' }, "A"),
-//     h('p', { key: 'B' }, "B"),
-//     h('p', { key: 'C' }, "C"),
-//     h('p', { key: 'E' }, "E"),
-//     h('p', { key: 'F' }, "F"),
-//     h('p', { key: 'G' }, "G"),
+// 	h('p', { key: 'A' }, 'A'),
+// 	h('p', { key: 'B' }, 'B'),
+// 	h('p', { key: 'C' }, 'C'),
+// 	h('p', { key: 'E' }, 'E'),
+// 	h('p', { key: 'F' }, 'F'),
+// 	h('p', { key: 'G' }, 'G'),
 // ]
 // const nextChildren = [
-//     h('p', { key: 'A' }, "A"),
-//     h('p', { key: 'B' }, "B"),
-//     h('p', { key: 'E' }, "E"),
-//     h('p', { key: 'C' }, "C"),
-//     h('p', { key: 'D' }, "D"),
-//     h('p', { key: 'F' }, "F"),
-//     h('p', { key: 'G' }, "G"),
+// 	h('p', { key: 'A' }, 'A'),
+// 	h('p', { key: 'B' }, 'B'),
+// 	h('p', { key: 'E' }, 'E'),
+// 	h('p', { key: 'C' }, 'C'),
+// 	h('p', { key: 'D' }, 'D'),
+// 	h('p', { key: 'F' }, 'F'),
+// 	h('p', { key: 'G' }, 'G'),
 // ]
 
 // 6. 综合
@@ -212,18 +212,18 @@ const nextChildren = [
         
     }
  */
-// const prevChildren = [
-// 	h('p', { key: 'A' }, 'A'),
-// 	h('p', {}, 'C'),
-// 	h('p', { key: 'B' }, 'B'),
-// 	h('p', { key: 'D' }, 'D'),
-// ]
-// const nextChildren = [
-// 	h('p', { key: 'A' }, 'A'),
-// 	h('p', { key: 'B' }, 'B'),
-// 	h('p', {}, 'C'),
-// 	h('p', { key: 'D' }, 'D'),
-// ]
+const prevChildren = [
+	h('p', { key: 'A' }, 'A'),
+	h('p', {}, 'C'),
+	h('p', { key: 'B' }, 'B'),
+	h('p', { key: 'D' }, 'D'),
+]
+const nextChildren = [
+	h('p', { key: 'A' }, 'A'),
+	h('p', { key: 'B' }, 'B'),
+	h('p', {}, 'C'),
+	h('p', { key: 'D' }, 'D'),
+]
 
 export default {
 	name: 'ArrayToText',
