@@ -11,12 +11,15 @@ export function createComponentInstance(vnode, parent) {
 		vnode,
 		type: vnode.type,
 		setupState: {},
+		component: null,
+		next: null,
 		props: {},
 		slots: {},
 		provides: parent ? parent.provides : {},
 		parent: parent,
 		isMounted: false,
 		emit: () => {},
+		update: () => {},
 	}
 	component.emit = emit.bind(null, component) as any
 	return component

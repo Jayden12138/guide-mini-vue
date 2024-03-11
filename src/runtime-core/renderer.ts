@@ -2,6 +2,7 @@ import { effect } from '../reactivity/src/index'
 import { ShapeFlags } from '../shared/ShapeFlags'
 import { EMPTY_OBJ } from '../shared/index'
 import { createComponentInstance, setupComponent } from './component'
+import { shouldUpdateComponent } from './componentUpdateUtils'
 import { createAppAPI } from './createApp'
 import { Fragment, Text } from './vnode'
 
@@ -386,7 +387,22 @@ export function createRenderer(options) {
 
 	function processComponent(n1, n2, container, parentComponent) {
 		// mount | update
-		mountComponent(n2, container, parentComponent)
+		if (!n1) {
+			mountComponent(n2, container, parentComponent)
+		} else {
+			updateComponent(n1, n2)
+		}
+	}
+
+	function updateComponent(n1, n2) {
+		const instance = (n2.component = n1.component)
+		if (shouldUpdateComponent(n1, n2)) {
+			instance.next = n2
+			instance.update()
+		} else {
+			n2.el = n1.el
+			instance.vnode = n2
+		}
 	}
 
 	function mountComponent(initialVNode, container, parentComponent) {
@@ -395,7 +411,10 @@ export function createRenderer(options) {
 		// setupRenderEffect
 
 		// instance
-		const instance = createComponentInstance(initialVNode, parentComponent)
+		const instance = (initialVNode.component = createComponentInstance(
+			initialVNode,
+			parentComponent
+		))
 
 		// setup 去配置 render 以及其他 props 、slots 等
 		setupComponent(instance, container)
@@ -405,7 +424,7 @@ export function createRenderer(options) {
 	}
 
 	function setupRenderEffect(instance, initialVNode, container) {
-		effect(() => {
+		instance.update = effect(() => {
 			const { proxy } = instance
 			if (!instance.isMounted) {
 				console.log('init')
@@ -421,6 +440,13 @@ export function createRenderer(options) {
 			} else {
 				console.log('update')
 
+				const { vnode, next } = instance
+
+				if (next) {
+					next.el = vnode.el
+					updateComponentPreRender(instance, next)
+				}
+
 				const subTree = instance.render.call(proxy)
 				const prevSubTree = instance.subTree
 
@@ -435,6 +461,12 @@ export function createRenderer(options) {
 	return {
 		createApp: createAppAPI(render),
 	}
+}
+
+function updateComponentPreRender(instance, next) {
+	instance.props = next.props
+	instance.vnode = next
+	instance.next = null
 }
 
 function getSequence(arr: number[]): number[] {
