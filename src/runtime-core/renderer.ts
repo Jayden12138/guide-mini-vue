@@ -4,6 +4,7 @@ import { EMPTY_OBJ } from '../shared/index'
 import { createComponentInstance, setupComponent } from './component'
 import { shouldUpdateComponent } from './componentUpdateUtils'
 import { createAppAPI } from './createApp'
+import { queueJobs } from './scheduler'
 import { Fragment, Text } from './vnode'
 
 export function createRenderer(options) {
@@ -424,38 +425,46 @@ export function createRenderer(options) {
 	}
 
 	function setupRenderEffect(instance, initialVNode, container) {
-		instance.update = effect(() => {
-			const { proxy } = instance
-			if (!instance.isMounted) {
-				console.log('init')
-				// 执行 render
-				const subTree = (instance.subTree = instance.render.call(proxy))
-				console.log(subTree)
+		instance.update = effect(
+			() => {
+				const { proxy } = instance
+				if (!instance.isMounted) {
+					console.log('init')
+					// 执行 render
+					const subTree = (instance.subTree =
+						instance.render.call(proxy))
+					console.log(subTree)
 
-				patch(null, subTree, container, instance, null)
+					patch(null, subTree, container, instance, null)
 
-				instance.isMounted = true
-				// 处理完
-				initialVNode.el = subTree.el
-			} else {
-				console.log('update')
+					instance.isMounted = true
+					// 处理完
+					initialVNode.el = subTree.el
+				} else {
+					console.log('update')
 
-				const { vnode, next } = instance
+					const { vnode, next } = instance
 
-				if (next) {
-					next.el = vnode.el
-					updateComponentPreRender(instance, next)
+					if (next) {
+						next.el = vnode.el
+						updateComponentPreRender(instance, next)
+					}
+
+					const subTree = instance.render.call(proxy)
+					const prevSubTree = instance.subTree
+
+					patch(prevSubTree, subTree, container, instance, null)
+
+					// update
+					instance.subTree = subTree
 				}
-
-				const subTree = instance.render.call(proxy)
-				const prevSubTree = instance.subTree
-
-				patch(prevSubTree, subTree, container, instance, null)
-
-				// update
-				instance.subTree = subTree
+			},
+			{
+				scheduler() {
+					queueJobs(instance.update)
+				},
 			}
-		})
+		)
 	}
 
 	return {
