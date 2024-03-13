@@ -7,7 +7,7 @@ const enum TagType {
 
 export function baseParse(content: string) {
 	const context = createContext(content)
-	return createRoot(parseChildren(context))
+	return createRoot(parseChildren(context, ''))
 }
 
 function parseInterpolation(context) {
@@ -42,10 +42,10 @@ function advanceBy(context, numberOfCharacters) {
 	context.source = context.source.slice(numberOfCharacters)
 }
 
-function parseChildren(context) {
+function parseChildren(context, parentTag) {
 	const nodes: any = []
 
-	while (!isEnd(context)) {
+	while (!isEnd(context, parentTag)) {
 		let node
 		let s = context.source
 		if (s.startsWith('{{')) {
@@ -63,9 +63,9 @@ function parseChildren(context) {
 	return nodes
 }
 
-function isEnd(context) {
+function isEnd(context, parentTag) {
 	const s = context.source
-	if (s.startsWith('</')) {
+	if (parentTag && s.startsWith('</' + parentTag)) {
 		return true
 	}
 
@@ -73,15 +73,16 @@ function isEnd(context) {
 }
 
 function parseText(context) {
-	let endToken = '{{'
-	let endIndex = context.source.indexOf(endToken)
-	let length = context.source.length
-
-	if (endIndex !== -1) {
-		length = endIndex
+	let endToken = ['{{', '<']
+	let endIndex = context.source.length
+	for (let i = 0; i < endToken.length; i++) {
+		let index = context.source.indexOf(endToken[i])
+		if (index !== -1 && endIndex > index) {
+			endIndex = index
+		}
 	}
 
-	const content = parseTextData(context, length)
+	const content = parseTextData(context, endIndex)
 
 	return {
 		type: NodeTypes.TEXT,
@@ -108,7 +109,7 @@ function createRoot(children) {
 }
 function parseElement(context: any) {
 	const element: any = parseTag(context, TagType.Start)
-	element.children = parseChildren(context)
+	element.children = parseChildren(context, element.tag)
 	parseTag(context, TagType.End)
 
 	return element
