@@ -7,7 +7,7 @@ const enum TagType {
 
 export function baseParse(content: string) {
 	const context = createContext(content)
-	return createRoot(parseChildren(context, ''))
+	return createRoot(parseChildren(context, []))
 }
 
 function parseInterpolation(context) {
@@ -42,17 +42,17 @@ function advanceBy(context, numberOfCharacters) {
 	context.source = context.source.slice(numberOfCharacters)
 }
 
-function parseChildren(context, parentTag) {
+function parseChildren(context, ancestor) {
 	const nodes: any = []
 
-	while (!isEnd(context, parentTag)) {
+	while (!isEnd(context, ancestor)) {
 		let node
 		let s = context.source
 		if (s.startsWith('{{')) {
 			node = parseInterpolation(context)
 		} else if (s.startsWith('<')) {
 			if (/[a-z]/.test(s[1])) {
-				node = parseElement(context)
+				node = parseElement(context, ancestor)
 			}
 		} else {
 			node = parseText(context)
@@ -63,10 +63,14 @@ function parseChildren(context, parentTag) {
 	return nodes
 }
 
-function isEnd(context, parentTag) {
+function isEnd(context, ancestor) {
 	const s = context.source
-	if (parentTag && s.startsWith('</' + parentTag)) {
-		return true
+
+	for (let i = ancestor.length - 1; i >= 0; i--) {
+		let tag = ancestor[i].tag
+		if (startsWithCloseTagOpen(s, tag)) {
+			return true
+		}
 	}
 
 	return !s
@@ -107,12 +111,25 @@ function createRoot(children) {
 		children,
 	}
 }
-function parseElement(context: any) {
+function parseElement(context: any, ancestor) {
 	const element: any = parseTag(context, TagType.Start)
-	element.children = parseChildren(context, element.tag)
-	parseTag(context, TagType.End)
+	ancestor.push(element)
+	element.children = parseChildren(context, ancestor)
+	ancestor.pop()
+
+	if (startsWithCloseTagOpen(context.source, element.tag)) {
+		parseTag(context, TagType.End)
+	} else {
+		throw new Error(`缺少结束标签: ${element.tag}`)
+	}
 
 	return element
+}
+function startsWithCloseTagOpen(source, tag) {
+	return (
+		source.startsWith('</') &&
+		source.slice(2, 2 + tag.length).toLowerCase() === tag.toLowerCase()
+	)
 }
 function parseTag(context: any, type: TagType) {
 	const match: any = /^<\/?([a-z]*)/.exec(context.source)

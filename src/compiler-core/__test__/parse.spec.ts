@@ -83,4 +83,11 @@ describe('parse', () => {
 			],
 		})
 	})
+
+	test('should throw error when lack end tag', () => {
+		// baseParse("<div><span></div>")
+		expect(() => {
+			baseParse('<div><span></div>')
+		}).toThrow()
+	})
 })
