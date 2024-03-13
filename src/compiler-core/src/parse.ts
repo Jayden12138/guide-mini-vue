@@ -23,13 +23,11 @@ function parseInterpolation(context) {
 	// {{
 	advanceBy(context, openDelimiter.length)
 
-	// message
 	let rawContentLength = closeIndex - closeDelimiter.length
-	let rawContent = context.source.slice(0, rawContentLength)
+	let rawContent = parseTextData(context, rawContentLength)
 	const content = rawContent.trim()
 
-	// message}}
-	advanceBy(context, rawContentLength + closeDelimiter.length)
+	advanceBy(context, closeDelimiter.length)
 
 	return {
 		type: NodeTypes.INTERPOLATION, // 'interpolation'
@@ -55,10 +53,26 @@ function parseChildren(context) {
 		if (/[a-z]/.test(s[1])) {
 			node = parseElement(context)
 		}
+	} else {
+		node = parseText(context)
 	}
 	nodes.push(node)
 
 	return nodes
+}
+
+function parseText(context) {
+	const content = parseTextData(context, context.source.length)
+	return {
+		type: NodeTypes.TEXT,
+		content,
+	}
+}
+
+function parseTextData(context, length) {
+	const content = context.source.slice(0, length)
+	advanceBy(context, length)
+	return content
 }
 
 function createContext(content: string) {
