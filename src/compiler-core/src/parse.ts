@@ -45,24 +45,44 @@ function advanceBy(context, numberOfCharacters) {
 function parseChildren(context) {
 	const nodes: any = []
 
-	let node
-	let s = context.source
-	if (s.startsWith('{{')) {
-		node = parseInterpolation(context)
-	} else if (s.startsWith('<')) {
-		if (/[a-z]/.test(s[1])) {
-			node = parseElement(context)
+	while (!isEnd(context)) {
+		let node
+		let s = context.source
+		if (s.startsWith('{{')) {
+			node = parseInterpolation(context)
+		} else if (s.startsWith('<')) {
+			if (/[a-z]/.test(s[1])) {
+				node = parseElement(context)
+			}
+		} else {
+			node = parseText(context)
 		}
-	} else {
-		node = parseText(context)
+		nodes.push(node)
 	}
-	nodes.push(node)
 
 	return nodes
 }
 
+function isEnd(context) {
+	const s = context.source
+	if (s.startsWith('</')) {
+		return true
+	}
+
+	return !s
+}
+
 function parseText(context) {
-	const content = parseTextData(context, context.source.length)
+	let endToken = '{{'
+	let endIndex = context.source.indexOf(endToken)
+	let length = context.source.length
+
+	if (endIndex !== -1) {
+		length = endIndex
+	}
+
+	const content = parseTextData(context, length)
+
 	return {
 		type: NodeTypes.TEXT,
 		content,
@@ -87,7 +107,8 @@ function createRoot(children) {
 	}
 }
 function parseElement(context: any) {
-	const element = parseTag(context, TagType.Start)
+	const element: any = parseTag(context, TagType.Start)
+	element.children = parseChildren(context)
 	parseTag(context, TagType.End)
 
 	return element
