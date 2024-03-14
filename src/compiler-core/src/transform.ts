@@ -14,7 +14,7 @@ function traverseNode(node, context) {
 	const { nodeTransforms } = context
 	for (let i = 0; i < nodeTransforms.length; i++) {
 		const plugin = nodeTransforms[i]
-		plugin(node)
+		plugin(node, context)
 	}
 
 	switch (node.type) {
