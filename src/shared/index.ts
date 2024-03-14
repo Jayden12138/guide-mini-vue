@@ -12,3 +12,5 @@ export const hasOwn = (val, key) =>
 	Object.prototype.hasOwnProperty.call(val, key)
 
 export const EMPTY_OBJ = {}
+
+export const isString = val => typeof val === 'string'
