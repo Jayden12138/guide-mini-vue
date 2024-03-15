@@ -5,6 +5,11 @@ import { PublicInstanceProxyHanlders } from './componentPublicInstance'
 import { initSlots } from './componentSlots'
 
 let currentInstance = null
+let compiler
+
+export function registerRuntimeCompiler(_compiler) {
+	compiler = _compiler
+}
 
 export function createComponentInstance(vnode, parent) {
 	const component = {
@@ -73,9 +78,12 @@ export function handleSetupResult(instance, setupResult) {
 export function finishComponentSetup(instance) {
 	const Component = instance.type
 
-	if (Component.render) {
-		instance.render = Component.render
+	if (compiler && !Component.render) {
+		if (Component.template) {
+			Component.render = compiler(Component.template)
+		}
 	}
+	instance.render = Component.render
 }
 
 export function getCurrentInstance() {

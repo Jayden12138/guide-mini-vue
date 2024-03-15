@@ -14,3 +14,5 @@ export const hasOwn = (val, key) =>
 export const EMPTY_OBJ = {}
 
 export const isString = val => typeof val === 'string'
+
+export * from './toDisplayString'

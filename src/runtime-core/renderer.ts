@@ -431,8 +431,10 @@ export function createRenderer(options) {
 				if (!instance.isMounted) {
 					console.log('init')
 					// 执行 render
-					const subTree = (instance.subTree =
-						instance.render.call(proxy))
+					const subTree = (instance.subTree = instance.render.call(
+						proxy,
+						proxy
+					))
 					console.log(subTree)
 
 					patch(null, subTree, container, instance, null)
@@ -450,7 +452,7 @@ export function createRenderer(options) {
 						updateComponentPreRender(instance, next)
 					}
 
-					const subTree = instance.render.call(proxy)
+					const subTree = instance.render.call(proxy, proxy)
 					const prevSubTree = instance.subTree
 
 					patch(prevSubTree, subTree, container, instance, null)
