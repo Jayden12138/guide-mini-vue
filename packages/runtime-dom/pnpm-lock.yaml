@@ -1,0 +1,13 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  '@tiny-vue/runtime-core':
+    specifier: workspace:^
+    version: link:../runtime-core
+  '@tiny-vue/shared':
+    specifier: workspace:^
+    version: link:../shared
