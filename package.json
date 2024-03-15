@@ -1,21 +1,21 @@
 {
-  "name": "guide-mini-vue",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "git@github.com:Jayden12138/guide-mini-vue.git",
-  "license": "MIT",
-  "scripts": {
-    "test": "jest"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.23.9",
-    "@babel/preset-env": "^7.23.9",
-    "@babel/preset-typescript": "^7.23.3",
-    "babel-jest": "^29.7.0",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "@types/jest": "^29.5.12",
-    "jest": "^29.7.0"
-  }
+	"name": "guide-mini-vue",
+	"version": "1.0.0",
+	"main": "index.js",
+	"repository": "git@github.com:Jayden12138/guide-mini-vue.git",
+	"license": "MIT",
+	"scripts": {
+		"test": "jest"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.23.9",
+		"@babel/preset-env": "^7.23.9",
+		"@babel/preset-typescript": "^7.23.3",
+		"babel-jest": "^29.7.0",
+		"typescript": "^5.3.3"
+	},
+	"dependencies": {
+		"@types/jest": "^29.5.12",
+		"jest": "^29.7.0"
+	}
 }
