@@ -1,3 +1,5 @@
+import { extend } from '../../shared'
+
 const targetMap = new Map()
 let activeEffect
 
@@ -5,6 +7,7 @@ class ReactiveEffect {
 	private _fn: any
 	public deps: any = []
 	private active: boolean = true
+	onStop?: () => {}
 	constructor(_fn, public scheduler?) {
 		this._fn = _fn
 	}
@@ -18,12 +21,14 @@ class ReactiveEffect {
 		if (this.active) {
 			this.active = false
 			cleanupEffect(this)
+			this.onStop && this.onStop()
 		}
 	}
 }
 
 export function effect(fn, options: any = {}) {
 	const _effect: any = new ReactiveEffect(fn, options.scheduler)
+	extend(_effect, options)
 
 	_effect.run()
 
